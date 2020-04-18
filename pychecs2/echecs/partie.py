@@ -92,13 +92,13 @@ class Partie:
             raise ValueError("La source est a une position invalide!")
 
         if(self.echiquier.couleur_piece_a_position(source) == ''):
-            raise ValueError("Il n'y a pas de piece a la position source!")
+            raise ValueError("Il n'y a pas de piece à cette position!")
 
         if(self.echiquier.couleur_piece_a_position(source) != self.joueur_actif):
-            raise ValueError("La piece selectionnee n'a pas la couleur du joueur actuel!")
+            raise ValueError("La piece selectionnée n'a pas la couleur du joueur actuel!")
 
         if(not self.echiquier.deplacement_est_valide(source, cible)):
-            raise ValueError("Le deplacement de la piece n'est pas valide!")
+            raise ValueError("Le déplacement de la piece n'est pas valide!")
 
         self.echiquier.deplacer(source, cible)
 
@@ -143,3 +143,9 @@ class Partie:
             for jeu in lignes.split('\n'):
                 source, cible = jeu.split('-')
                 self.echiquier.deplacer(source, cible)
+
+
+if __name__ == '__main__':
+
+
+
