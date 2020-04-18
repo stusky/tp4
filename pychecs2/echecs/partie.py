@@ -144,8 +144,5 @@ class Partie:
                 source, cible = jeu.split('-')
                 self.echiquier.deplacer(source, cible)
 
-
-if __name__ == '__main__':
-
-
-
+#
+# if __name__ == '__main__':

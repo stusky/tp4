@@ -245,25 +245,36 @@ class Echiquier:
             if not self.chemin_libre_entre_positions(position_source, position_cible):
                 return False
 
+        # Mélo
         # Roque
         couleur_adversaire = 'blanc'
-
+        rangee_origine = '8'
         if piece.couleur == 'blanc':
             couleur_adversaire = 'noir'
+            rangee_origine = '1'
 
         if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and piece.couleur == piece_cible.couleur:
             if position_cible[0] == 'a':
                 for colonne in self.lettres_colonnes[0:5]:
                     print(colonne)
-                    if self.case_est_menacee_par(colonne + '1', couleur_adversaire):
+                    if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
                         return False
                 return True
             else:
                 for colonne in self.lettres_colonnes[4:]:
                     print(colonne)
-                    if self.case_est_menacee_par(colonne + '8', couleur_adversaire):
+                    if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
                         return False
                 return True
+
+            #HISTORIQUE!!!!!! (fonctionne quand même peu importe ou roi est sur la ligne)
+
+        #Mélo
+        #Gérer si le Roi est échec
+        for position in self.dictionnaire_pieces.keys():
+            if isinstance(self.dictionnaire_pieces[position], Roi) and self.dictionnaire_pieces[position].couleur == piece.couleur:
+                position_mon_roi = position
+
 
 
         if piece_cible is not None:
@@ -274,7 +285,7 @@ class Echiquier:
                 return piece.peut_faire_une_prise_vers(position_source, position_cible)
 
         return piece.peut_se_deplacer_vers(position_source, position_cible)
-
+    #Mélo
     def case_est_menacee_par(self, case, autre_joueur):
         # piece = self.recuperer_piece_a_position(case)
         # if piece is not None and piece.couleur == autre_joueur:
@@ -445,23 +456,20 @@ if __name__ == '__main__':
     #         'g8': Cavalier('noir'),
     #        }
     e.dictionnaire_pieces = {
-    'a1': Tour('blanc'),
+    'd1': Tour('blanc'),
     'e1': Roi('blanc'),
     'h1': Tour('blanc'),
     'a2': Pion('blanc'),
-    'b2': Pion('blanc'),
     'e2': Pion('blanc'),
     'h7': Pion('noir'),
     'a8': Tour('noir'),
-    'b8': Cavalier('noir'),
     'b6': Fou('noir'),
-    'e7': Dame('noir'),
-    'e8': Roi('noir'),
-    'f8': Fou('noir'),
-    'g8': Cavalier('noir'),
+    'd7': Dame('noir'),
+    'd8': Roi('noir'),
+    'f7': Fou('noir'),
     'h8': Tour('noir'),
     }
 
     print(e)
-    # print(e.deplacement_est_valide('e1', 'h1'))
-    print(e.case_est_menacee_par('f2', 'noir'))
+    print(e.deplacement_est_valide('d8', 'a8'))
+    # print(e.case_est_menacee_par('g1', 'noir'))

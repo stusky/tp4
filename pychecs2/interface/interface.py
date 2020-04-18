@@ -177,7 +177,7 @@ class Fenetre(Tk):
         #Thierry
         if(self.canvas_echiquier.partie.partie_terminee()):
             self.messages['foreground'] = 'red'
-            self.messages['text'] = "La partie est terminee. Appuyer sur le bouton rejouer pour demarrer une nouvelle partie"
+            self.messages['text'] = "La partie est terminée. Appuyez sur le bouton rejouer pour démarrer une nouvelle partie"
             return
 
         # On trouve le numéro de ligne/colonne en divisant les positions en y/x par le nombre de pixels par case.
@@ -193,7 +193,7 @@ class Fenetre(Tk):
             couleur = self.canvas_echiquier.partie.echiquier.couleur_piece_a_position(position)
             if(couleur != '' and couleur != self.canvas_echiquier.partie.joueur_actif):
                 self.messages['foreground'] = 'red'
-                self.messages['text'] = 'La couleur de la piece selectionnee ne correspond pas a la couleur du joueur actuel!'
+                self.messages['text'] = 'La couleur de la pièce selectionnée ne correspond pas à la couleur du joueur actuel!'
             else:
                 try:
                     piece = self.canvas_echiquier.partie.echiquier.dictionnaire_pieces[position]
