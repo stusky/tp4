@@ -8,7 +8,6 @@ import json
 # Exemple d'importation de la classe Partie.
 from pychecs2.echecs.partie import Partie
 
-
 class CanvasEchiquier(Canvas):
     """Classe héritant d'un Canvas, et affichant un échiquier qui se redimensionne automatique lorsque
     la fenêtre est étirée.
@@ -158,10 +157,21 @@ class Fenetre(Tk):
         self.messages['foreground'] = 'black'
         self.messages['text'] = 'Les blancs commencent'
 
+
+    #Mélo
+    def echec(self):
+        autre_joueur = 'noir'
+        if self.canvas_echiquier.partie.joueur_actif == 'noir':
+            autre_joueur = 'blanc'
+
+        if self.canvas_echiquier.partie.roi_en_echec(autre_joueur):
+            self.messages['foreground'] = 'red'
+            self.messages['text'] = "Votre roi est en échec!"
+
     def rejouer(self):
         self.canvas_echiquier.rejouer()
         self.messages['foreground'] = 'black'
-        self.messages['text'] = 'Les blancs commencent'
+        self.messages['text'] = 'Les blancs commencent.'
 
     #Thierry
     def sauvegarder(self):
@@ -173,6 +183,8 @@ class Fenetre(Tk):
         self.canvas_echiquier.redimensionner()
 
     def selectionner(self, event):
+
+        self.echec()
 
         #Thierry
         if(self.canvas_echiquier.partie.partie_terminee()):
@@ -207,6 +219,7 @@ class Fenetre(Tk):
                 except KeyError:
                     self.messages['foreground'] = 'red'
                     self.messages['text'] = 'Erreur: Aucune pièce à cet endroit.'
+
 
         else:
             try:

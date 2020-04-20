@@ -4,6 +4,7 @@ dont un objet échiquier (une instance de la classe Echiquier).
 
 """
 from pychecs2.echecs.echiquier import Echiquier
+from pychecs2.echecs.piece import Roi
 
 
 class Partie:
@@ -25,6 +26,8 @@ class Partie:
 
         # Thierry
         self.historique = []
+
+
 
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
@@ -84,6 +87,19 @@ class Partie:
             self.joueur_actif = 'noir'
         else:
             self.joueur_actif = 'blanc'
+
+    # Mélo
+    def roi_en_echec(self, couleur):
+        if couleur == 'blanc':
+            autre_couleur = 'noir'
+        else:
+            autre_couleur = 'blanc'
+
+        for position in self.echiquier.dictionnaire_pieces.keys():
+            if isinstance(self.echiquier.dictionnaire_pieces[position], Roi) \
+                    and self.echiquier.dictionnaire_pieces[position].couleur == couleur:
+                position_mon_roi = position
+                return self.echiquier.case_est_menacee_par(position_mon_roi, autre_couleur)
 
     #Thierry
     def jouerEtape(self, source, cible):
