@@ -271,6 +271,18 @@ class Roi(Piece):
 
         return True
 
+    #Mélo
+    def roque_est_valide(self, position_source, position_cible):
+        # Le roi peut roquer si:
+        # -il n'a pas encore effectué de déplacement
+        # -la tour n'a pas encore effectué de déplacement
+        # -il n'est pas en échec
+        # -le chemin est libre entre le roi et la tour
+        # -aucune case entre le roi et la tour n'est menacée
+
+        # if Roi not in partie.historique.keys()
+        pass
+
     def __repr__(self):
         if self.est_blanc():
             if UTILISER_UNICODE:
@@ -307,3 +319,8 @@ class Dame(Piece):
                 return '\u265b'
             else:
                 return 'DN'
+
+
+if __name__ == '__main__':
+    p = Pion('blanc')
+    print(p.peut_faire_une_prise_vers('b2', 'c3'))
