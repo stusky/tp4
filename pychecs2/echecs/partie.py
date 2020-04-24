@@ -4,7 +4,14 @@ dont un objet échiquier (une instance de la classe Echiquier).
 
 """
 from pychecs2.echecs.echiquier import Echiquier
+import pickle
 
+
+class AucunePieceAPosition(Exception):
+    pass
+
+class MauvaiseCouleurPiece(Exception):
+    pass
 
 class Partie:
     """La classe Partie contient les informations sur une partie d'échecs, c'est à dire un échiquier, puis
@@ -22,9 +29,6 @@ class Partie:
 
         # Création d'une instance de la classe Echiquier, qui sera manipulée dans les méthodes de la classe.
         self.echiquier = Echiquier()
-
-        # Thierry
-        self.historique = []
 
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
@@ -76,6 +80,20 @@ class Partie:
 
             print("Déplacement invalide.\n")
 
+    #Thierry
+    def deplacer(self, position_source, position_cible):
+        piece = self.echiquier.recuperer_piece_a_position(position_source)
+
+        if piece is None:
+            raise AucunePieceAPosition("Aucune piece à cet endroit!")
+        elif piece.couleur != self.joueur_actif:
+            raise MauvaiseCouleurPiece("La pièce source n'appartient pas au joueur actif!")
+
+        self.echiquier.deplacer(position_source, position_cible)
+        self.joueur_suivant()
+
+
+
     def joueur_suivant(self):
         """Change le joueur actif: passe de blanc à noir, ou de noir à blanc, selon la couleur du joueur actif.
 
@@ -84,27 +102,6 @@ class Partie:
             self.joueur_actif = 'noir'
         else:
             self.joueur_actif = 'blanc'
-
-    #Thierry
-    def jouerEtape(self, source, cible):
-
-        if(not self.echiquier.position_est_valide(source)):
-            raise ValueError("La source est a une position invalide!")
-
-        if(self.echiquier.couleur_piece_a_position(source) == ''):
-            raise ValueError("Il n'y a pas de piece à cette position!")
-
-        if(self.echiquier.couleur_piece_a_position(source) != self.joueur_actif):
-            raise ValueError("La piece selectionnée n'a pas la couleur du joueur actuel!")
-
-        if(not self.echiquier.deplacement_est_valide(source, cible)):
-            raise ValueError("Le déplacement de la piece n'est pas valide!")
-
-        self.echiquier.deplacer(source, cible)
-
-        self.historique.append(source + '-' + cible)
-
-        self.joueur_suivant()
 
 
     def jouer(self):
@@ -127,25 +124,18 @@ class Partie:
         print(self.echiquier)
         print("\nPartie terminée! Le joueur {} a gagné".format(self.determiner_gagnant()))
 
-    #Thierry
-    def sauvegarder(self):
-        with open('sauvegarde.txt', 'w') as fp:
-            fp.write('\n'.join(self.historique))
 
-    #Thierry
-    def charger(self):
-
-        self.echiquier = Echiquier()
-
-        with open('sauvegarde.txt', 'r') as fp:
-            lignes = fp.read()
-
-            for jeu in lignes.split('\n'):
-                source, cible = jeu.split('-')
-                self.echiquier.deplacer(source, cible)
+    def sauvegarder_partie(self):
+        """
+        """
+        with open("sauvegarde", "wb") as f:
+            pickle.dump(self.echiquier.dictionnaire_pieces, f)
+        #TODO documenter la méthode
 
 
-if __name__ == '__main__':
-
-
-
+    def charger_partie(self):
+        """
+        """
+        with open("sauvegarde", "rb") as f:
+            self.echiquier.dictionnaire_pieces = pickle.load(f)
+        # TODO documenter la méthode

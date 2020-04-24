@@ -4,6 +4,11 @@
 """
 from pychecs2.echecs.piece import Pion, Tour, Fou, Cavalier, Dame, Roi, UTILISER_UNICODE
 
+
+class ErreurDeplacement(Exception):
+    pass
+
+
 class Echiquier:
     """Classe Echiquier, implémentée avec un dictionnaire de pièces.
 
@@ -229,8 +234,6 @@ class Echiquier:
         """
         # On s'assure que la position source contient une pièce.
         piece = self.recuperer_piece_a_position(position_source)
-        piece_cible = self.recuperer_piece_a_position(position_cible)
-        rangee, colone_source, colone_cible = position_cible[1], position_source[0], position_cible[0]
 
         if piece is None:
             return False
@@ -245,27 +248,7 @@ class Echiquier:
             if not self.chemin_libre_entre_positions(position_source, position_cible):
                 return False
 
-        # Roque
-        couleur_adversaire = 'blanc'
-
-        if piece.couleur == 'blanc':
-            couleur_adversaire = 'noir'
-
-        if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and piece.couleur == piece_cible.couleur:
-            if position_cible[0] == 'a':
-                for colonne in self.lettres_colonnes[0:5]:
-                    print(colonne)
-                    if self.case_est_menacee_par(colonne + '1', couleur_adversaire):
-                        return False
-                return True
-            else:
-                for colonne in self.lettres_colonnes[4:]:
-                    print(colonne)
-                    if self.case_est_menacee_par(colonne + '8', couleur_adversaire):
-                        return False
-                return True
-
-
+        piece_cible = self.recuperer_piece_a_position(position_cible)
         if piece_cible is not None:
             if piece_cible.couleur == piece.couleur:
                 return False
@@ -275,43 +258,25 @@ class Echiquier:
 
         return piece.peut_se_deplacer_vers(position_source, position_cible)
 
-    def case_est_menacee_par(self, case, autre_joueur):
-        # piece = self.recuperer_piece_a_position(case)
-        # if piece is not None and piece.couleur == autre_joueur:
-        #     raise ValueError ("La couleur de la pièce ne peut être identique à la couleur de l'adversaire.")
-
-        for position in self.dictionnaire_pieces.keys():
-            # print(position)
-            if self.dictionnaire_pieces[position].couleur == autre_joueur:
-                # print(f'{self.dictionnaire_pieces[position]} : {position}')
-                if isinstance(self.dictionnaire_pieces[position], Pion):
-                    if self.dictionnaire_pieces[position].peut_faire_une_prise_vers(position, case):
-                        return True
-                else:
-                    if self.deplacement_est_valide(position, case):
-                        return True
-        return False
-
-
     def deplacer(self, position_source, position_cible):
-        """Effectue le déplacement d'une pièce en position source, vers la case en position cible. Vérifie d'abord
-        si le déplacement est valide, et ne fait rien (puis retourne False) dans ce cas. Si le déplacement est valide,
-        il est effectué (dans l'échiquier actuel) et la valeur True est retournée.
-
-        Args:
-            position_source (str): La position source.
-            position_cible (str): La position cible.
-
-        Returns:
-            bool: True si le déplacement était valide et a été effectué, et False autrement.
-
-        """
+    #     """Effectue le déplacement d'une pièce en position source, vers la case en position cible. Vérifie d'abord
+    #     si le déplacement est valide, et ne fait rien (puis retourne False) dans ce cas. Si le déplacement est valide,
+    #     il est effectué (dans l'échiquier actuel) et la valeur True est retournée.
+    #
+    #     Args:
+    #         position_source (str): La position source.
+    #         position_cible (str): La position cible.
+    #
+    #     Returns:
+    #         bool: True si le déplacement était valide et a été effectué, et False autrement.
+    #
+    #     """
         if not self.deplacement_est_valide(position_source, position_cible):
-            return False
+            raise ErreurDeplacement("Le déplacement demandé n'est pas possible")
 
         self.dictionnaire_pieces[position_cible] = self.dictionnaire_pieces[position_source]
         del self.dictionnaire_pieces[position_source]
-        return True
+
 
     def roi_de_couleur_est_dans_echiquier(self, couleur):
         """Vérifie si un roi de la couleur reçue en argument est présent dans l'échiquier.
@@ -371,6 +336,8 @@ class Echiquier:
             'h8': Tour('noir'),
         }
 
+
+
     def __repr__(self):
         """Affiche l'échiquier à l'écran. Utilise des codes Unicode, si la constante UTILISER_UNICODE est à True dans
         le module piece. Sinon, utilise seulement des caractères standards.
@@ -421,47 +388,3 @@ class Echiquier:
                 chaine += self.lettres_colonnes[colonne] + '    '
         chaine += '\n'
         return chaine
-
-if __name__ == '__main__':
-    e = Echiquier()
-    # e.dictionnaire_pieces= {
-    #         'a1': Tour('blanc'),
-    #         'b3': Cavalier('blanc'),
-    #         'c1': Fou('blanc'),
-    #         'a7': Dame('blanc'),
-    #         'e1': Roi('blanc'),
-    #         'f1': Fou('blanc'),
-    #         'a2': Pion('blanc'),
-    #         'b2': Pion('blanc'),
-    #         'f2': Pion('blanc'),
-    #         'g2': Pion('blanc'),
-    #         'g7': Pion('noir'),
-    #         'h7': Pion('noir'),
-    #         'b8': Cavalier('noir'),
-    #         'a6': Fou('noir'),
-    #         'd5': Dame('noir'),
-    #         'e8': Roi('noir'),
-    #         'e5': Fou('noir'),
-    #         'g8': Cavalier('noir'),
-    #        }
-    e.dictionnaire_pieces = {
-    'a1': Tour('blanc'),
-    'e1': Roi('blanc'),
-    'h1': Tour('blanc'),
-    'a2': Pion('blanc'),
-    'b2': Pion('blanc'),
-    'e2': Pion('blanc'),
-    'h7': Pion('noir'),
-    'a8': Tour('noir'),
-    'b8': Cavalier('noir'),
-    'b6': Fou('noir'),
-    'e7': Dame('noir'),
-    'e8': Roi('noir'),
-    'f8': Fou('noir'),
-    'g8': Cavalier('noir'),
-    'h8': Tour('noir'),
-    }
-
-    print(e)
-    # print(e.deplacement_est_valide('e1', 'h1'))
-    print(e.case_est_menacee_par('f2', 'noir'))
