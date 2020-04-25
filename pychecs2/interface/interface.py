@@ -2,7 +2,7 @@
 un échiquier dans un Canvas, puis de déterminer quelle case a été sélectionnée.
 
 """
-from tkinter import NSEW, Canvas, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar
+from tkinter import NSEW, Canvas, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W
 from pychecs2.echecs.partie import AucunePieceAPosition, MauvaiseCouleurPiece
 from pychecs2.echecs.echiquier import ErreurDeplacement
 
@@ -152,7 +152,9 @@ class Fenetre(Tk):
         self.canvas_echiquier.grid(sticky=NSEW)
 
         ##########################################################
-        ######              VISUEL                         #######
+        #                                                        #
+        #                    VISUEL                              #
+        #                                                        #
         ##########################################################
         # Étiquette d'information et de sélection des pièces
         self.messages = Label(self)
@@ -167,9 +169,15 @@ class Fenetre(Tk):
         self.messages1['foreground'] = 'blue'
 
         # Fenetre pour afficher la liste des déplacements effectués
-        self.mon_frame1 = LabelFrame(self, text="Les mouvements", borderwidth=2, relief=RIDGE, padx=5, pady=5)
+        self.mon_frame1 = LabelFrame(self, text="Les déplacements ", borderwidth=2, relief=RIDGE, padx=5, pady=5)
         self.mon_frame1.grid(row=0, column=1, sticky='n')
-        self.liste1 = Listbox(self).grid(row=1, column=1)
+        self.yScroll = Scrollbar(self.mon_frame1, orient=VERTICAL)
+        self.yScroll.grid(row=0, column=2, sticky=N + S)
+        self.liste1 = Listbox(self.mon_frame1, yscrollcommand=self.yScroll.set)
+        self.liste1 = Listbox(self.mon_frame1)
+        self.liste1.grid(row=0, column=0)
+        self.yScroll['command'] = self.liste1.yview
+
 
 
         # Frame pour les options de jeux
