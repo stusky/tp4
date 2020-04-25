@@ -98,7 +98,6 @@ class Partie:
         self.joueur_suivant()
 
 
-
     def joueur_suivant(self):
         """Change le joueur actif: passe de blanc à noir, ou de noir à blanc, selon la couleur du joueur actif.
 

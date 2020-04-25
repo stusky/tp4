@@ -80,8 +80,6 @@ class CanvasEchiquier(Canvas):
                 self.create_rectangle(debut_colonne, debut_ligne, fin_colonne, fin_ligne, fill=couleur, tags='case')
 
 
-
-
     def dessiner_pieces(self):
         # Caractères unicode représentant les pièces. Vous avez besoin de la police d'écriture DejaVu.
         caracteres_pieces = {'PB': '\u2659',
@@ -129,7 +127,6 @@ class CanvasEchiquier(Canvas):
         # On supprime les anciennes pièces et on ajoute les nouvelles.
         self.delete('case')
         self.dessiner_cases()
-
 
 
 class Fenetre(Tk):

@@ -31,6 +31,9 @@ class Echiquier:
 
         self.initialiser_echiquier_depart()
 
+        # Mélo
+        self.hist = {}
+
     def position_est_valide(self, position):
         """Vérifie si une position est valide (dans l'échiquier). Une position est une concaténation d'une lettre de
         colonne et d'un chiffre de rangée, par exemple 'a1' ou 'h8'.
@@ -248,6 +251,33 @@ class Echiquier:
             if not self.chemin_libre_entre_positions(position_source, position_cible):
                 return False
 
+        # Mélo
+        # Roque
+        couleur_adversaire = 'blanc'
+        rangee_origine = '8'
+        if piece.couleur == 'blanc':
+            couleur_adversaire = 'noir'
+            rangee_origine = '1'
+
+        if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and piece.couleur == piece_cible.couleur:
+            print('yaa')
+            if piece not in self.hist.keys() and piece_cible not in self.hist.keys():
+                if position_cible[0] == 'a':
+                    for colonne in self.lettres_colonnes[0:5]:
+                        print(colonne)
+                        if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
+                            return False
+                    return True
+                else:
+                    for colonne in self.lettres_colonnes[4:]:
+                        print(colonne)
+                        if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
+                            return False
+                    return True
+            return False
+        # Tout fonctionne, mais incompatible avec interface.
+        # En selectionnant le roi, puis la tour, la tour est le nouvel objet selectionne et on ne peut faire le roque.
+
         piece_cible = self.recuperer_piece_a_position(position_cible)
         if piece_cible is not None:
             if piece_cible.couleur == piece.couleur:
@@ -257,6 +287,25 @@ class Echiquier:
                 return piece.peut_faire_une_prise_vers(position_source, position_cible)
 
         return piece.peut_se_deplacer_vers(position_source, position_cible)
+
+    # Mélo
+    def case_est_menacee_par(self, case, autre_joueur):
+        # piece = self.recuperer_piece_a_position(case)
+        # if piece is not None and piece.couleur == autre_joueur:
+        #     raise ValueError ("La couleur de la pièce ne peut être identique à la couleur de l'adversaire.")
+
+        for position in self.dictionnaire_pieces.keys():
+            # print(position)
+            if self.dictionnaire_pieces[position].couleur == autre_joueur:
+                # print(f'{self.dictionnaire_pieces[position]} : {position}')
+                if isinstance(self.dictionnaire_pieces[position], Pion):
+                    if self.dictionnaire_pieces[position].peut_faire_une_prise_vers(position, case):
+                        return True
+                else:
+                    if self.deplacement_est_valide(position, case):
+                        return True
+        return False
+
 
     def deplacer(self, position_source, position_cible):
     #     """Effectue le déplacement d'une pièce en position source, vers la case en position cible. Vérifie d'abord
