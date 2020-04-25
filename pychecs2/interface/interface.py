@@ -4,7 +4,7 @@ un échiquier dans un Canvas, puis de déterminer quelle case a été sélection
 """
 from tkinter import NSEW, Canvas, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W
 from pychecs2.echecs.partie import AucunePieceAPosition, MauvaiseCouleurPiece
-from pychecs2.echecs.echiquier import ErreurDeplacement
+from pychecs2.echecs.echiquier import Echiquier, ErreurDeplacement
 
 # Exemple d'importation de la classe Partie.
 from pychecs2.echecs.partie import Partie
@@ -161,7 +161,7 @@ class Fenetre(Tk):
 
         # # Étiquette d'information sur le joueur courant
         self.messages1 = Label(self)
-        self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
+        self.messages1['text'] = "Au tour du joueur: " + self.partie.joueur_actif.upper()
         self.messages1.grid(row=2, sticky = 'w')
         self.messages1['foreground'] = 'blue'
 
@@ -185,10 +185,12 @@ class Fenetre(Tk):
         bouton_demarrer = Button(self.mon_frame, text="Démarrer une nouvelle partie", command=self.reinitialiser).grid(row=0, column=2)
 
 
-
         # On lie un clic sur le CanvasEchiquier à une méthode.
         self.canvas_echiquier.bind('<Button-1>', self.selectionner)
 
+        #Mélo (dans sélectionner?)
+        if self.partie.mon_roi_en_echec:
+            self.roi_en_rouge()
 
     def reinitialiser(self):
         self.partie.echiquier.initialiser_echiquier_depart()
@@ -256,9 +258,18 @@ class Fenetre(Tk):
             self.canvas_echiquier.raffraichir_pieces()
             self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
 
-
-
-
+    #Mélo
+    def roi_en_rouge(self, event):
+        #
+        # self.canvas_echiquier.raffraichir_cases()
+        # if self.canvas_echiquier.partie.mon_roi_en_echec():
+        #     self.canvas_echiquier.create_rectangle(
+        #         (event.x // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
+        #         (event.y // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
+        #         ((event.x // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
+        #         ((event.y // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
+        #         fill='red')
+        pass
 
 
         # On récupère l'information sur la pièce à l'endroit choisi. Notez le try...except!

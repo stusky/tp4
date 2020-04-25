@@ -3,7 +3,9 @@
 dont un objet échiquier (une instance de la classe Echiquier).
 
 """
+
 from pychecs2.echecs.echiquier import Echiquier
+from pychecs2.echecs.piece import Roi
 import pickle
 
 
@@ -128,6 +130,20 @@ class Partie:
         print(self.echiquier)
         print("\nPartie terminée! Le joueur {} a gagné".format(self.determiner_gagnant()))
 
+    def position_mon_roi(self, couleur_joueur_actif):
+        for position in self.echiquier.dictionnaire_pieces.keys():
+            if isinstance(self.echiquier.dictionnaire_pieces[position], Roi) \
+                    and self.echiquier.dictionnaire_pieces[position].couleur == couleur_joueur_actif:
+                return position
+
+    # Mélo
+    def mon_roi_en_echec(self):
+        if self.joueur_actif == 'blanc':
+            autre_couleur = 'noir'
+        else:
+            autre_couleur = 'blanc'
+
+        return self.echiquier.case_est_menacee_par(self.position_mon_roi, autre_couleur)
 
     def sauvegarder_partie(self):
         """
@@ -150,3 +166,6 @@ class Partie:
 # print(', '.join(aa))
 #
 # dernierDeplacement = ("(" + piece.couleur + ")" + position_source + "=>" + position_cible])
+
+if __name__ == '__main__':
+    pass

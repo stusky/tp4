@@ -237,6 +237,8 @@ class Echiquier:
         """
         # On s'assure que la position source contient une pièce.
         piece = self.recuperer_piece_a_position(position_source)
+        piece_cible = self.recuperer_piece_a_position(position_cible)
+
 
         if piece is None:
             return False
@@ -255,6 +257,7 @@ class Echiquier:
         # Roque
         couleur_adversaire = 'blanc'
         rangee_origine = '8'
+
         if piece.couleur == 'blanc':
             couleur_adversaire = 'noir'
             rangee_origine = '1'
@@ -305,7 +308,6 @@ class Echiquier:
                     if self.deplacement_est_valide(position, case):
                         return True
         return False
-
 
     def deplacer(self, position_source, position_cible):
     #     """Effectue le déplacement d'une pièce en position source, vers la case en position cible. Vérifie d'abord
