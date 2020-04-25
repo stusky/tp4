@@ -2,7 +2,8 @@
 un échiquier dans un Canvas, puis de déterminer quelle case a été sélectionnée.
 
 """
-from tkinter import NSEW, Canvas, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W
+from tkinter import NSEW, Canvas, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W, Frame
+import webbrowser
 from pychecs2.echecs.partie import AucunePieceAPosition, MauvaiseCouleurPiece
 from pychecs2.echecs.echiquier import ErreurDeplacement
 
@@ -169,14 +170,19 @@ class Fenetre(Tk):
         self.messages1['foreground'] = 'blue'
 
         # Fenetre pour afficher la liste des déplacements effectués
-        self.mon_frame1 = LabelFrame(self, text="Les déplacements ", borderwidth=2, relief=RIDGE, padx=5, pady=5)
-        self.mon_frame1.grid(row=0, column=1, sticky='n')
+        self.monFramePrincipal = Frame(self)
+        self.monFramePrincipal.grid(row=0, column=1, sticky='n')
+        self.mon_frame1 = LabelFrame(self.monFramePrincipal, text="Les déplacements ", borderwidth=2, relief=RIDGE, padx=5, pady=5)
+        self.mon_frame1.grid(row=0, column=0, sticky='n')
         self.yScroll = Scrollbar(self.mon_frame1, orient=VERTICAL)
-        self.yScroll.grid(row=0, column=2, sticky=N + S)
+        self.yScroll.grid(row=0, column=1, sticky=N + S)
         self.liste1 = Listbox(self.mon_frame1, yscrollcommand=self.yScroll.set)
         self.liste1 = Listbox(self.mon_frame1)
         self.liste1.grid(row=0, column=0)
         self.yScroll['command'] = self.liste1.yview
+        self.mon_frame2 = Frame(self.monFramePrincipal, borderwidth=2, relief=RIDGE, padx=5, pady=5)
+        self.mon_frame2.grid(row=2, column=0, sticky='n')
+        but1 = Button(self.mon_frame2, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
 
 
 
@@ -192,6 +198,11 @@ class Fenetre(Tk):
         # On lie un clic sur le CanvasEchiquier à une méthode.
         self.canvas_echiquier.bind('<Button-1>', self.selectionner)
 
+
+
+    def ouvrirURL(self):
+        url = 'https://fr.wikipedia.org/wiki/Règles_du_jeu_d%27échecs'
+        webbrowser.open_new(url)
 
     def reinitialiser(self):
         self.partie.echiquier.initialiser_echiquier_depart()

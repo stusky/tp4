@@ -32,6 +32,7 @@ class Partie:
 
         self.listeDeplacements = []
         self.dernierDeplacement = []
+        self.listeDesEchiquiers = []
 
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
@@ -93,9 +94,11 @@ class Partie:
             raise MauvaiseCouleurPiece("La pièce source n'appartient pas au joueur actif!")
 
         self.echiquier.deplacer(position_source, position_cible)
-        self.dernierDeplacement = ["(" + piece.couleur + ")" + position_source + "=>" + position_cible]
-        self.listeDeplacements.append(self.dernierDeplacement)
         self.joueur_suivant()
+        self.dernierDeplacement = ["(" + piece.couleur + ")" + position_source + "->" + position_cible]
+        self.listeDeplacements.append(self.dernierDeplacement)
+        self.listeDeplacements.append(self.echiquier)
+        print(self.listeDeplacements)
 
 
 
