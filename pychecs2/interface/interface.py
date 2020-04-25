@@ -179,7 +179,7 @@ class Fenetre(Tk):
         self.yScroll['command'] = self.liste1.yview
         self.mon_frame2 = Frame(self.monFramePrincipal, borderwidth=2, relief=RIDGE, padx=5, pady=5)
         self.mon_frame2.grid(row=2, column=0, sticky='n')
-        but1 = Button(self.mon_frame2, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
+        but1 = Button(self.mon_frame2, text="Lien web pour accéder\naux règles du jeu!", command=self.ouvrirURL).grid(row=0, column=0)
 
 
 
@@ -195,9 +195,8 @@ class Fenetre(Tk):
         self.canvas_echiquier.bind('<Button-1>', self.selectionner)
 
         #Mélo (dans sélectionner?)
-        if self.partie.mon_roi_en_echec:
-            self.roi_en_rouge()
-
+           # if self.partie.mon_roi_en_echec:
+    #     self.roi_en_rouge()
 
     def ouvrirURL(self):
         url = 'https://fr.wikipedia.org/wiki/Règles_du_jeu_d%27échecs'
