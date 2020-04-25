@@ -30,6 +30,9 @@ class Partie:
         # Création d'une instance de la classe Echiquier, qui sera manipulée dans les méthodes de la classe.
         self.echiquier = Echiquier()
 
+        self.listeDeplacements = []
+        self.dernierDeplacement = []
+
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
         le roi de la couleur adverse doit être absente de l'échiquier.
@@ -90,6 +93,8 @@ class Partie:
             raise MauvaiseCouleurPiece("La pièce source n'appartient pas au joueur actif!")
 
         self.echiquier.deplacer(position_source, position_cible)
+        self.dernierDeplacement = ["(" + piece.couleur + ")" + position_source + "=>" + position_cible]
+        self.listeDeplacements.append(self.dernierDeplacement)
         self.joueur_suivant()
 
 
@@ -139,3 +144,10 @@ class Partie:
         with open("sauvegarde", "rb") as f:
             self.echiquier.dictionnaire_pieces = pickle.load(f)
         # TODO documenter la méthode
+
+
+
+# aa = ['(blanc)f2=>f4', '(noir)d7=>d5']
+# print(', '.join(aa))
+#
+# dernierDeplacement = ("(" + piece.couleur + ")" + position_source + "=>" + position_cible])

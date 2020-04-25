@@ -2,7 +2,7 @@
 un échiquier dans un Canvas, puis de déterminer quelle case a été sélectionnée.
 
 """
-from tkinter import NSEW, Canvas, Label, Tk, Button, LabelFrame, RIDGE
+from tkinter import NSEW, Canvas, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar
 from pychecs2.echecs.partie import AucunePieceAPosition, MauvaiseCouleurPiece
 from pychecs2.echecs.echiquier import ErreurDeplacement
 
@@ -151,28 +151,39 @@ class Fenetre(Tk):
         self.canvas_echiquier = CanvasEchiquier(self, 60, self.partie)
         self.canvas_echiquier.grid(sticky=NSEW)
 
-        #Thierry
-        # Ajout d'une étiquette d'information.
+        ##########################################################
+        ######              VISUEL                         #######
+        ##########################################################
+        # Étiquette d'information et de sélection des pièces
         self.messages = Label(self)
+        self.messages['foreground'] = 'black'
         self.messages['text'] = "Bienvenue au super jeux d'échec!"
         self.messages.grid(row=1, sticky = 'w')
 
+        # # Étiquette d'information sur le joueur courant
         self.messages1 = Label(self)
         self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
         self.messages1.grid(row=2, sticky = 'w')
         self.messages1['foreground'] = 'blue'
 
-        #Thierry
+        # Fenetre pour afficher la liste des déplacements effectués
+        self.mon_frame1 = LabelFrame(self, text="Les mouvements", borderwidth=2, relief=RIDGE, padx=5, pady=5)
+        self.mon_frame1.grid(row=0, column=1, sticky='n')
+        self.liste1 = Listbox(self).grid(row=1, column=1)
 
-        mon_frame = LabelFrame(self, text="Options de jeux", borderwidth=2, relief=RIDGE, padx=5, pady=5)
-        mon_frame.grid(row=3, column=0, sticky = 'w')
 
-        bouton_sauver = Button(mon_frame, text="Sauvegarder une partie", command = self.sauvergarder).grid(row=0, column=0)
-        bouton_charge = Button(mon_frame, text="Charger une partie", command = self.charger).grid(row=0, column=1)
-        bouton_demarrer = Button(mon_frame, text="Démarrer une nouvelle partie", command=self.reinitialiser).grid(row=0, column=2)
+        # Frame pour les options de jeux
+        self.mon_frame = LabelFrame(self, text="Options de jeux", borderwidth=2, relief=RIDGE, padx=5, pady=5)
+        self.mon_frame.grid(row=4, column=0, sticky = 'w')
+        bouton_sauver = Button(self.mon_frame, text="Sauvegarder une partie", command = self.sauvergarder).grid(row=0, column=0)
+        bouton_charge = Button(self.mon_frame, text="Charger une partie", command = self.charger).grid(row=0, column=1)
+        bouton_demarrer = Button(self.mon_frame, text="Démarrer une nouvelle partie", command=self.reinitialiser).grid(row=0, column=2)
+
+
 
         # On lie un clic sur le CanvasEchiquier à une méthode.
         self.canvas_echiquier.bind('<Button-1>', self.selectionner)
+
 
     def reinitialiser(self):
         self.partie.echiquier.initialiser_echiquier_depart()
@@ -209,18 +220,17 @@ class Fenetre(Tk):
 
                     # On change la valeur de l'attribut position_selectionnee.
                     self.position_selectionnee = position
-
-                    self.messages['foreground'] = 'black'
                     self.messages['text'] = 'Pièce sélectionnée : {} à la position {}.'.format(piece, self.position_selectionnee)
 
 
             else:
                 self.partie.deplacer(self.canvas_echiquier.position_selectionnee, position)
                 self.canvas_echiquier.position_selectionnee = None
+                self.liste1.insert(END, self.partie.dernierDeplacement)
 
                 if self.partie.partie_terminee():
-                    self.messages['foreground'] = 'black'
-                    self.messages['text'] = 'Partie terminée, les ' + self.partie.determiner_gagnant() + ' ont gagné\nOn recommence?!'
+                    self.messages['foreground'] = 'green'
+                    self.messages['text'] = 'Partie terminée, les ' + self.partie.determiner_gagnant().upper() + ' ont gagné.\nOn recommence?!'
 
         except (ErreurDeplacement, AucunePieceAPosition, MauvaiseCouleurPiece) as e:
             self.messages['foreground'] = 'red'
@@ -240,6 +250,7 @@ class Fenetre(Tk):
                     fill='pink', tags="select")
             self.canvas_echiquier.raffraichir_pieces()
             self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
+
 
 
 
