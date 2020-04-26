@@ -32,7 +32,6 @@ class Partie:
 
         self.listeDeplacements = []
         self.dernierDeplacement = []
-        self.listeDesEchiquiers = []
 
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
@@ -84,6 +83,23 @@ class Partie:
 
             print("Déplacement invalide.\n")
 
+    # def annulerDernierMouvement(self):
+    #     if len(self.listeDesEchiquiers) >= 2:
+    #         self.echiquier.dictionnaire_pieces = self.listeDesEchiquiers[-2]
+    #         self.listeDesEchiquiers = self.listeDesEchiquiers[:-2]
+    #     if len(self.listeDesEchiquiers) == 1:
+    #         self.echiquier.dictionnaire_pieces = self.listeDesEchiquiers[-1]
+    #         self.listeDesEchiquiers = self.listeDesEchiquiers[-1]
+    #     self.joueur_suivant()
+    #     print(self.echiquier.dictionnaire_pieces)
+    #     print(self.listeDesEchiquiers)
+
+    def annulerDernierMouvement(self):
+        self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
+        self.joueur_suivant()
+        print(self.echiquier.listeDesEchiquiers)
+
+
     #Thierry
     def deplacer(self, position_source, position_cible):
         piece = self.echiquier.recuperer_piece_a_position(position_source)
@@ -97,8 +113,10 @@ class Partie:
         self.joueur_suivant()
         self.dernierDeplacement = ["(" + piece.couleur + ")" + position_source + "->" + position_cible]
         self.listeDeplacements.append(self.dernierDeplacement)
-        self.listeDeplacements.append(self.echiquier)
-        print(self.listeDeplacements)
+
+        echiquierCopy = dict(self.echiquier.dictionnaire_pieces)
+        self.echiquier.listeDesEchiquiers.append(echiquierCopy)
+        print(self.echiquier.listeDesEchiquiers)
 
 
 
@@ -149,8 +167,3 @@ class Partie:
         # TODO documenter la méthode
 
 
-
-# aa = ['(blanc)f2=>f4', '(noir)d7=>d5']
-# print(', '.join(aa))
-#
-# dernierDeplacement = ("(" + piece.couleur + ")" + position_source + "=>" + position_cible])

@@ -31,6 +31,7 @@ class Echiquier:
 
         self.initialiser_echiquier_depart()
 
+
     def position_est_valide(self, position):
         """Vérifie si une position est valide (dans l'échiquier). Une position est une concaténation d'une lettre de
         colonne et d'un chiffre de rangée, par exemple 'a1' ou 'h8'.
@@ -277,7 +278,6 @@ class Echiquier:
         self.dictionnaire_pieces[position_cible] = self.dictionnaire_pieces[position_source]
         del self.dictionnaire_pieces[position_source]
 
-
     def roi_de_couleur_est_dans_echiquier(self, couleur):
         """Vérifie si un roi de la couleur reçue en argument est présent dans l'échiquier.
 
@@ -301,6 +301,8 @@ class Echiquier:
         dictionnaire_pieces de votre instance d'Echiquier.
 
         """
+
+        self.listeDesEchiquiers = []
         self.dictionnaire_pieces = {
             'a1': Tour('blanc'),
             'b1': Cavalier('blanc'),
@@ -335,7 +337,7 @@ class Echiquier:
             'g8': Cavalier('noir'),
             'h8': Tour('noir'),
         }
-
+        self.listeDesEchiquiers.append(self.dictionnaire_pieces)
 
 
     def __repr__(self):
