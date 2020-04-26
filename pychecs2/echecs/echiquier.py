@@ -339,6 +339,13 @@ class Echiquier:
         }
         self.listeDesEchiquiers.append(self.dictionnaire_pieces)
 
+        self.setBlanc = set()
+        self.setNoir = set()
+        for i in self.listeDesEchiquiers[0].values():
+            if (i.est_blanc()):
+                self.setBlanc.add(i)
+            else:
+                self.setNoir.add(i)
 
     def __repr__(self):
         """Affiche l'échiquier à l'écran. Utilise des codes Unicode, si la constante UTILISER_UNICODE est à True dans

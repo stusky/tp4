@@ -98,6 +98,15 @@ class Partie:
         self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
         self.joueur_suivant()
         print(self.echiquier.listeDesEchiquiers)
+        self.resteBlanc = set()
+        self.resteNoir = set()
+        for i in self.echiquier.dictionnaire_pieces.values():
+            if (i.est_blanc()):
+                self.resteBlanc.add(i)
+            else:
+                self.resteNoir.add(i)
+        self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
+        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
 
 
     #Thierry
@@ -116,7 +125,18 @@ class Partie:
 
         echiquierCopy = dict(self.echiquier.dictionnaire_pieces)
         self.echiquier.listeDesEchiquiers.append(echiquierCopy)
-        print(self.echiquier.listeDesEchiquiers)
+
+
+        self.resteBlanc = set()
+        self.resteNoir = set()
+        for i in self.echiquier.dictionnaire_pieces.values():
+            if (i.est_blanc()):
+                self.resteBlanc.add(i)
+            else:
+                self.resteNoir.add(i)
+        self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
+        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
+        print("reste blanc", self.gapBlanc)
 
 
 

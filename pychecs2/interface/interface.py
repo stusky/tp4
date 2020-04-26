@@ -183,36 +183,38 @@ class Fenetre(Tk):
         self.liste1.grid(row=0, column=0)
         self.yScroll['command'] = self.liste1.yview
 
-        # FRAME a DROITE: Bouton pour se connecter au site web des intrusctions d'echec
-        self.mon_frame2 = Frame(self.monFramePrincipal, borderwidth=2, relief=RIDGE, padx=5, pady=5)
-        self.mon_frame2.grid(row=1, column=0, sticky='n')
-        but1 = Button(self.mon_frame2, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
+
 
 
         self.monSousFrame = Frame(self.monFramePrincipal)
-        self.monSousFrame.grid(row=2, column=0, sticky='n')
+        self.monSousFrame.grid(row=1, column=0, sticky='n')
 
         # FRAME a DROITE: Fenetre pour afficher les pieces blanches mangées
-        self.mon_frame3 = LabelFrame(self.monSousFrame, text="Les blancs\nmangés ", borderwidth=2, relief=RIDGE, padx=5, pady=5, width=7)
-        self.mon_frame3.grid(row=0, column=0, sticky='n')
-        self.yScroll = Scrollbar(self.mon_frame3, orient=VERTICAL)
+        self.mon_frame2 = LabelFrame(self.monSousFrame, text="Les blancs\nmangés ", borderwidth=2, relief=RIDGE, padx=5, pady=5, width=7)
+        self.mon_frame2.grid(row=0, column=0, sticky='n')
+        self.yScroll = Scrollbar(self.mon_frame2, orient=VERTICAL)
         self.yScroll.grid(row=0, column=1, sticky=N + S)
         #small_font = font(size=5)
-        self.liste2 = Listbox(self.mon_frame3, yscrollcommand=self.yScroll.set)
-        self.liste2 = Listbox(self.mon_frame3, width=7)
+        self.liste2 = Listbox(self.mon_frame2, yscrollcommand=self.yScroll.set)
+        self.liste2 = Listbox(self.mon_frame2, width=7)
         self.liste2.grid(row=0, column=0)
         self.yScroll['command'] = self.liste2.yview
 
         # FRAME a DROITE: Fenetre pour afficher les pieces blanches mangées
-        self.mon_frame3 = LabelFrame(self.monSousFrame, text="Les noirs\nmangés ", borderwidth=2, relief=RIDGE, padx=5, pady=5, width=7)
-        self.mon_frame3.grid(row=0, column=1, sticky='n')
-        self.yScroll = Scrollbar(self.mon_frame3, orient=VERTICAL)
+        self.mon_frame2 = LabelFrame(self.monSousFrame, text="Les noirs\nmangés ", borderwidth=2, relief=RIDGE, padx=5, pady=5, width=7)
+        self.mon_frame2.grid(row=0, column=1, sticky='n')
+        self.yScroll = Scrollbar(self.mon_frame2, orient=VERTICAL)
         self.yScroll.grid(row=0, column=1, sticky=N + S)
         #small_font = font(size=5)
-        self.liste3 = Listbox(self.mon_frame3, yscrollcommand=self.yScroll.set)
-        self.liste3 = Listbox(self.mon_frame3, width=7)
+        self.liste3 = Listbox(self.mon_frame2, yscrollcommand=self.yScroll.set)
+        self.liste3 = Listbox(self.mon_frame2, width=7)
         self.liste3.grid(row=0, column=0)
         self.yScroll['command'] = self.liste2.yview
+
+        # FRAME a DROITE: Bouton pour se connecter au site web des intrusctions d'echec
+        self.mon_frame3 = Frame(self.monFramePrincipal, borderwidth=2, relief=RIDGE, padx=5, pady=5)
+        self.mon_frame3.grid(row=2, column=0, sticky='n')
+        but1 = Button(self.mon_frame3, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
 
 
 
@@ -241,6 +243,8 @@ class Fenetre(Tk):
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
         self.liste1.delete(0, END)
+        self.liste2.delete(0, END)
+        self.liste3.delete(0, END)
 
     def sauvergarder(self):
         self.partie.sauvegarder_partie()
@@ -258,6 +262,11 @@ class Fenetre(Tk):
         self.canvas_echiquier.raffraichir_pieces()
         self.liste1.delete(END)
         self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
+        for i in self.partie.gapBlanc:
+            self.liste2.insert(END, i)
+        self.liste3.delete(0, END)
+        for i in self.partie.gapNoir:
+            self.liste3.insert(END, i)
 
     def selectionner(self, event):
         # On trouve le numéro de ligne/colonne en divisant les positions en y/x par le nombre de pixels par case.
@@ -287,6 +296,13 @@ class Fenetre(Tk):
                 self.partie.deplacer(self.canvas_echiquier.position_selectionnee, position)
                 self.canvas_echiquier.position_selectionnee = None
                 self.liste1.insert(END, self.partie.dernierDeplacement)
+                self.liste2.delete(0, END)
+                for i in self.partie.gapBlanc:
+                    self.liste2.insert(END, i)
+                self.liste3.delete(0, END)
+                for i in self.partie.gapNoir:
+                    self.liste3.insert(END, i)
+
 
                 if self.partie.partie_terminee():
                     self.messages['foreground'] = 'green'

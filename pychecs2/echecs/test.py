@@ -1,32 +1,26 @@
-from tkinter import Frame, N, E, S, W, EW,  END, Button, Listbox, Scrollbar, VERTICAL
 
-class Application(Frame):
-    def __init__(self,  master=None):
-        Frame.__init__(self, master)
-        self.grid(sticky=N+S+E+W)
-        self.mainframe()
+aa = {'aa': "blue", "bb": "pink"}
+bb = {'cc': "blue", "bb": "red"}
 
-    def mainframe(self):
-        self.data = Listbox(self, bg='red')
-        self.scrollbar = Scrollbar(self.data, orient=VERTICAL)
-        self.data.config(yscrollcommand=self.scrollbar.set)
-        self.scrollbar.config(command=self.data.yview)
+aaSet = set(aa.values())
+bbSet = set(bb.values())
 
-        for i in range(1000):
-            self.data.insert(END, str(i))
+print(aaSet - bbSet)
 
-        self.run = Button(self, text="run")
-        self.stop = Button(self, text="stop")
 
-        self.data.grid(row=0, column=0, rowspan=4,
-                   columnspan=2, sticky=N+E+S+W)
-        self.data.columnconfigure(0, weight=1)
+aa = ["blue", "pink"]
+bb = ["blue", "red"]
+print(aa- bb)
 
-        self.run.grid(row=4,column=0,sticky=EW)
-        self.stop.grid(row=4,column=1,sticky=EW)
+aaSet = set(aa)
+bbSet = set(bb)
 
-        self.scrollbar.grid(column=2, sticky=N+S)
+print(aaSet - bbSet)
 
-a = Application()
-a.mainframe()
-a.mainloop()
+
+
+
+
+
+
+
