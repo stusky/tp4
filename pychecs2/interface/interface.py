@@ -2,7 +2,7 @@
 un échiquier dans un Canvas, puis de déterminer quelle case a été sélectionnée.
 
 """
-from tkinter import NSEW, Canvas, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W, Frame
+from tkinter import NSEW, Canvas, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W, Frame, font
 import webbrowser
 from pychecs2.echecs.partie import AucunePieceAPosition, MauvaiseCouleurPiece
 from pychecs2.echecs.echiquier import Echiquier, ErreurDeplacement
@@ -130,6 +130,7 @@ class CanvasEchiquier(Canvas):
         self.dessiner_cases()
 
 
+
 class Fenetre(Tk):
     def __init__(self):
         super().__init__()
@@ -166,29 +167,66 @@ class Fenetre(Tk):
         self.messages1.grid(row=2, sticky = 'w')
         self.messages1['foreground'] = 'blue'
 
-        # Fenetre pour afficher la liste des déplacements effectués
+
+        # Création du frame a droite du canevas
         self.monFramePrincipal = Frame(self)
         self.monFramePrincipal.grid(row=0, column=1, sticky='n')
+
+        # FRAME a DROITE: Fenetre pour afficher la liste des déplacements effectués
         self.mon_frame1 = LabelFrame(self.monFramePrincipal, text="Les déplacements ", borderwidth=2, relief=RIDGE, padx=5, pady=5)
         self.mon_frame1.grid(row=0, column=0, sticky='n')
         self.yScroll = Scrollbar(self.mon_frame1, orient=VERTICAL)
         self.yScroll.grid(row=0, column=1, sticky=N + S)
+        #small_font = font(size=5)
         self.liste1 = Listbox(self.mon_frame1, yscrollcommand=self.yScroll.set)
         self.liste1 = Listbox(self.mon_frame1)
         self.liste1.grid(row=0, column=0)
         self.yScroll['command'] = self.liste1.yview
-        self.mon_frame2 = Frame(self.monFramePrincipal, borderwidth=2, relief=RIDGE, padx=5, pady=5)
-        self.mon_frame2.grid(row=2, column=0, sticky='n')
-        but1 = Button(self.mon_frame2, text="Lien web pour accéder\naux règles du jeu!", command=self.ouvrirURL).grid(row=0, column=0)
+
+
+
+
+        self.monSousFrame = Frame(self.monFramePrincipal)
+        self.monSousFrame.grid(row=1, column=0, sticky='n')
+
+        # FRAME a DROITE: Fenetre pour afficher les pieces blanches mangées
+        self.mon_frame2 = LabelFrame(self.monSousFrame, text="Les blancs\nmangés ", borderwidth=2, relief=RIDGE, padx=5, pady=5, width=7)
+        self.mon_frame2.grid(row=0, column=0, sticky='n')
+        self.yScroll = Scrollbar(self.mon_frame2, orient=VERTICAL)
+        self.yScroll.grid(row=0, column=1, sticky=N + S)
+        #small_font = font(size=5)
+        self.liste2 = Listbox(self.mon_frame2, yscrollcommand=self.yScroll.set)
+        self.liste2 = Listbox(self.mon_frame2, width=7)
+        self.liste2.grid(row=0, column=0)
+        self.yScroll['command'] = self.liste2.yview
+
+        # FRAME a DROITE: Fenetre pour afficher les pieces blanches mangées
+        self.mon_frame2 = LabelFrame(self.monSousFrame, text="Les noirs\nmangés ", borderwidth=2, relief=RIDGE, padx=5, pady=5, width=7)
+        self.mon_frame2.grid(row=0, column=1, sticky='n')
+        self.yScroll = Scrollbar(self.mon_frame2, orient=VERTICAL)
+        self.yScroll.grid(row=0, column=1, sticky=N + S)
+        #small_font = font(size=5)
+        self.liste3 = Listbox(self.mon_frame2, yscrollcommand=self.yScroll.set)
+        self.liste3 = Listbox(self.mon_frame2, width=7)
+        self.liste3.grid(row=0, column=0)
+        self.yScroll['command'] = self.liste2.yview
+
+        # FRAME a DROITE: Bouton pour se connecter au site web des intrusctions d'echec
+        self.mon_frame3 = Frame(self.monFramePrincipal, borderwidth=2, relief=RIDGE, padx=5, pady=5)
+        self.mon_frame3.grid(row=2, column=0, sticky='n')
+        but1 = Button(self.mon_frame3, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
+
+
 
 
 
         # Frame pour les options de jeux
-        self.mon_frame = LabelFrame(self, text="Options de jeux", borderwidth=2, relief=RIDGE, padx=5, pady=5)
+        self.mon_frame = LabelFrame(self, text="Options de partie", borderwidth=2, relief=RIDGE, padx=5, pady=5)
         self.mon_frame.grid(row=4, column=0, sticky = 'w')
-        bouton_sauver = Button(self.mon_frame, text="Sauvegarder une partie", command = self.sauvergarder).grid(row=0, column=0)
-        bouton_charge = Button(self.mon_frame, text="Charger une partie", command = self.charger).grid(row=0, column=1)
-        bouton_demarrer = Button(self.mon_frame, text="Démarrer une nouvelle partie", command=self.reinitialiser).grid(row=0, column=2)
+        bouton_sauver = Button(self.mon_frame, text="Sauvegarder", command = self.sauvergarder).grid(row=0, column=0)
+        bouton_charge = Button(self.mon_frame, text="Charger", command = self.charger).grid(row=0, column=1)
+        bouton_demarrer = Button(self.mon_frame, text="Redémarrage", command=self.reinitialiser).grid(row=0, column=2)
+        bouton_annuler = Button(self.mon_frame, text="Annuler dernier mouvement", command=self.annulerDernierMouvement).grid(row=0, column=3)
 
 
         # On lie un clic sur le CanvasEchiquier à une méthode.
@@ -206,6 +244,9 @@ class Fenetre(Tk):
         self.partie.echiquier.initialiser_echiquier_depart()
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
+        self.liste1.delete(0, END)
+        self.liste2.delete(0, END)
+        self.liste3.delete(0, END)
 
     def sauvergarder(self):
         self.partie.sauvegarder_partie()
@@ -216,6 +257,18 @@ class Fenetre(Tk):
         self.partie.charger_partie()
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
+
+    def annulerDernierMouvement(self):
+        self.partie.annulerDernierMouvement()
+        self.canvas_echiquier.raffraichir_cases()
+        self.canvas_echiquier.raffraichir_pieces()
+        self.liste1.delete(END)
+        self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
+        for i in self.partie.gapBlanc:
+            self.liste2.insert(END, i)
+        self.liste3.delete(0, END)
+        for i in self.partie.gapNoir:
+            self.liste3.insert(END, i)
 
     def selectionner(self, event):
         # On trouve le numéro de ligne/colonne en divisant les positions en y/x par le nombre de pixels par case.
@@ -238,12 +291,20 @@ class Fenetre(Tk):
                     # On change la valeur de l'attribut position_selectionnee.
                     self.position_selectionnee = position
                     self.messages['text'] = 'Pièce sélectionnée : {} à la position {}.'.format(piece, self.position_selectionnee)
+                    self.messages['foreground'] = 'black'
 
 
             else:
                 self.partie.deplacer(self.canvas_echiquier.position_selectionnee, position)
                 self.canvas_echiquier.position_selectionnee = None
                 self.liste1.insert(END, self.partie.dernierDeplacement)
+                self.liste2.delete(0, END)
+                for i in self.partie.gapBlanc:
+                    self.liste2.insert(END, i)
+                self.liste3.delete(0, END)
+                for i in self.partie.gapNoir:
+                    self.liste3.insert(END, i)
+
 
                 if self.partie.partie_terminee():
                     self.messages['foreground'] = 'green'
@@ -280,6 +341,7 @@ class Fenetre(Tk):
         #         ((event.y // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
         #         fill='red')
         pass
+
 
 
         # On récupère l'information sur la pièce à l'endroit choisi. Notez le try...except!

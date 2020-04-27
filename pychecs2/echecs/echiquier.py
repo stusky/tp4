@@ -98,7 +98,7 @@ class Echiquier:
             rangee_fin (str): Le caractère représentant la rangée de fin, par exemple '4'.
 
         Exemple:
-            >>> echiquer.rangees_entre('1', '1')
+            >>> echiquier.rangees_entre('1', '1')
             []
             >>> echiquier.rangees_entre('2', '3')
             []
@@ -328,7 +328,6 @@ class Echiquier:
         self.dictionnaire_pieces[position_cible] = self.dictionnaire_pieces[position_source]
         del self.dictionnaire_pieces[position_source]
 
-
     def roi_de_couleur_est_dans_echiquier(self, couleur):
         """Vérifie si un roi de la couleur reçue en argument est présent dans l'échiquier.
 
@@ -352,6 +351,8 @@ class Echiquier:
         dictionnaire_pieces de votre instance d'Echiquier.
 
         """
+
+        self.listeDesEchiquiers = []
         self.dictionnaire_pieces = {
             'a1': Tour('blanc'),
             'b1': Cavalier('blanc'),
@@ -386,8 +387,15 @@ class Echiquier:
             'g8': Cavalier('noir'),
             'h8': Tour('noir'),
         }
+        self.listeDesEchiquiers.append(self.dictionnaire_pieces)
 
-
+        self.setBlanc = set()
+        self.setNoir = set()
+        for i in self.listeDesEchiquiers[0].values():
+            if (i.est_blanc()):
+                self.setBlanc.add(i)
+            else:
+                self.setNoir.add(i)
 
     def __repr__(self):
         """Affiche l'échiquier à l'écran. Utilise des codes Unicode, si la constante UTILISER_UNICODE est à True dans

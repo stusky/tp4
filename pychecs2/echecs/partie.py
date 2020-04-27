@@ -3,7 +3,6 @@
 dont un objet échiquier (une instance de la classe Echiquier).
 
 """
-
 from pychecs2.echecs.echiquier import Echiquier
 from pychecs2.echecs.piece import Roi
 import pickle
@@ -86,6 +85,32 @@ class Partie:
 
             print("Déplacement invalide.\n")
 
+    # def annulerDernierMouvement(self):
+    #     if len(self.listeDesEchiquiers) >= 2:
+    #         self.echiquier.dictionnaire_pieces = self.listeDesEchiquiers[-2]
+    #         self.listeDesEchiquiers = self.listeDesEchiquiers[:-2]
+    #     if len(self.listeDesEchiquiers) == 1:
+    #         self.echiquier.dictionnaire_pieces = self.listeDesEchiquiers[-1]
+    #         self.listeDesEchiquiers = self.listeDesEchiquiers[-1]
+    #     self.joueur_suivant()
+    #     print(self.echiquier.dictionnaire_pieces)
+    #     print(self.listeDesEchiquiers)
+
+    def annulerDernierMouvement(self):
+        self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
+        self.joueur_suivant()
+        print(self.echiquier.listeDesEchiquiers)
+        self.resteBlanc = set()
+        self.resteNoir = set()
+        for i in self.echiquier.dictionnaire_pieces.values():
+            if (i.est_blanc()):
+                self.resteBlanc.add(i)
+            else:
+                self.resteNoir.add(i)
+        self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
+        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
+
+
     #Thierry
     def deplacer(self, position_source, position_cible):
         piece = self.echiquier.recuperer_piece_a_position(position_source)
@@ -99,8 +124,21 @@ class Partie:
         self.joueur_suivant()
         self.dernierDeplacement = ["(" + piece.couleur + ")" + position_source + "->" + position_cible]
         self.listeDeplacements.append(self.dernierDeplacement)
-        self.listeDeplacements.append(self.echiquier)
-        print(self.listeDeplacements)
+
+        echiquierCopy = dict(self.echiquier.dictionnaire_pieces)
+        self.echiquier.listeDesEchiquiers.append(echiquierCopy)
+
+
+        self.resteBlanc = set()
+        self.resteNoir = set()
+        for i in self.echiquier.dictionnaire_pieces.values():
+            if (i.est_blanc()):
+                self.resteBlanc.add(i)
+            else:
+                self.resteNoir.add(i)
+        self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
+        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
+        print("reste blanc", self.gapBlanc)
 
 
     def joueur_suivant(self):
