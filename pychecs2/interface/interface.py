@@ -232,9 +232,7 @@ class Fenetre(Tk):
         # On lie un clic sur le CanvasEchiquier à une méthode.
         self.canvas_echiquier.bind('<Button-1>', self.selectionner)
 
-        #Mélo (dans sélectionner?)
-           # if self.partie.mon_roi_en_echec:
-    #     self.roi_en_rouge()
+
 
     def ouvrirURL(self):
         url = 'https://fr.wikipedia.org/wiki/Règles_du_jeu_d%27échecs'
@@ -269,6 +267,39 @@ class Fenetre(Tk):
         self.liste3.delete(0, END)
         for i in self.partie.gapNoir:
             self.liste3.insert(END, i)
+
+    def roi_en_rouge(self):
+
+        if self.partie.mon_roi_en_echec():
+            #On supprime les pieces et les cases
+            self.canvas_echiquier.delete('case')
+            print('etape 1')
+            self.canvas_echiquier.delete('piece')
+            print('etape 2')
+
+            #On determine la position du Roi en échec:
+            position_roi = self.partie.position_mon_roi(self.partie.joueur_actif)
+
+            #Écriture de la case du roi en pixels
+            index_colonne = self.partie.echiquier.lettres_colonnes.index(position_roi[0])
+            coordonnees_x1 = index_colonne * self.canvas_echiquier.n_pixels_par_case
+            coordonnees_x2 = coordonnees_x1 + self.canvas_echiquier.n_pixels_par_case
+
+            coordonnees_y1 = (7 - self.partie.echiquier.chiffres_rangees.index(position_roi[1])) * self.canvas_echiquier.n_pixels_par_case
+            coordonnees_y2 = coordonnees_y1 + self.canvas_echiquier.n_pixels_par_case
+
+            #On redessine les cases
+            self.canvas_echiquier.dessiner_cases()
+            print('etape 3')
+
+            #Dessin du carré rouge
+            self.canvas_echiquier.create_rectangle(
+                coordonnees_x1, coordonnees_y1, coordonnees_x2, coordonnees_y2, fill='red'
+            )
+            print('etape 4')
+            #On redessine les pieces
+            self.canvas_echiquier.dessiner_pieces()
+            print('etape 5')
 
     def selectionner(self, event):
         # On trouve le numéro de ligne/colonne en divisant les positions en y/x par le nombre de pixels par case.
@@ -319,6 +350,7 @@ class Fenetre(Tk):
         #Thierry
         finally:
             self.canvas_echiquier.raffraichir_cases()
+            self.roi_en_rouge()
             if self.canvas_echiquier.position_selectionnee:
                 self.canvas_echiquier.create_rectangle(
                     (event.x // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
@@ -329,18 +361,7 @@ class Fenetre(Tk):
             self.canvas_echiquier.raffraichir_pieces()
             self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
 
-    #Mélo
-    def roi_en_rouge(self, event):
-        #
-        # self.canvas_echiquier.raffraichir_cases()
-        # if self.canvas_echiquier.partie.mon_roi_en_echec():
-        #     self.canvas_echiquier.create_rectangle(
-        #         (event.x // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
-        #         (event.y // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
-        #         ((event.x // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
-        #         ((event.y // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
-        #         fill='red')
-        pass
+
 
 
 

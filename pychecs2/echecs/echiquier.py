@@ -263,17 +263,14 @@ class Echiquier:
             rangee_origine = '1'
 
         if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and piece.couleur == piece_cible.couleur:
-            print('yaa')
             if piece not in self.hist.keys() and piece_cible not in self.hist.keys():
                 if position_cible[0] == 'a':
                     for colonne in self.lettres_colonnes[0:5]:
-                        print(colonne)
                         if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
                             return False
                     return True
                 else:
                     for colonne in self.lettres_colonnes[4:]:
-                        print(colonne)
                         if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
                             return False
                     return True
@@ -302,6 +299,7 @@ class Echiquier:
             if self.dictionnaire_pieces[position].couleur == autre_joueur:
                 # print(f'{self.dictionnaire_pieces[position]} : {position}')
                 if isinstance(self.dictionnaire_pieces[position], Pion):
+                    # print(position, case)
                     if self.dictionnaire_pieces[position].peut_faire_une_prise_vers(position, case):
                         return True
                 else:

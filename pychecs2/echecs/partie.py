@@ -179,12 +179,13 @@ class Partie:
 
     # Mélo
     def mon_roi_en_echec(self):
+        position_roi = self.position_mon_roi(self.joueur_actif)
         if self.joueur_actif == 'blanc':
             autre_couleur = 'noir'
         else:
             autre_couleur = 'blanc'
 
-        return self.echiquier.case_est_menacee_par(self.position_mon_roi, autre_couleur)
+        return self.echiquier.case_est_menacee_par(position_roi, autre_couleur)
 
     def sauvegarder_partie(self):
         """
