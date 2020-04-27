@@ -139,7 +139,6 @@ class Fenetre(Tk):
         # Nom de la fenêtre.
         self.title("Échiquier")
 
-
         self.partie = Partie()
 
 
@@ -236,6 +235,9 @@ class Fenetre(Tk):
         # On lie un clic sur le CanvasEchiquier à une méthode.
         self.canvas_echiquier.bind('<Button-1>', self.selectionner)
 
+        self.piece_a_deplacer = None
+        self.position_piece_a_deplacer = None
+
     def message_charger(self):
         message = messagebox.askyesno('Avertissement',
                                             'Voulez-vous vraiment charger une autre partie? \nCette partie sera perdue.',
@@ -330,7 +332,68 @@ class Fenetre(Tk):
             print('etape 5')
 
     def selectionner(self, event):
-        pass
+        # On trouve le numéro de ligne/colonne en divisant les positions en y/x par le nombre de pixels par case.
+        ligne = event.y // self.canvas_echiquier.n_pixels_par_case
+        colonne = event.x // self.canvas_echiquier.n_pixels_par_case
+        position = "{}{}".format(
+            self.canvas_echiquier.lettres_colonnes[colonne],
+            self.canvas_echiquier.chiffres_rangees[self.canvas_echiquier.n_lignes - ligne - 1]
+        )
+        self.position = position
+
+        piece_selectionnee = self.partie.echiquier.recuperer_piece_a_position(position)
+
+
+        if piece_selectionnee is not None:
+            #Annuler une sélection
+            if piece_selectionnee == self.piece_a_deplacer:
+                self.piece_a_deplacer = None
+                self.position_piece_a_deplacer = None
+                self.canvas_echiquier.delete('select')
+
+            #Sélection d'une pièce de la couleur du joueur actif
+            elif piece_selectionnee.couleur == self.partie.joueur_actif:
+                self.piece_a_deplacer = piece_selectionnee
+                self.position_piece_a_deplacer = position
+
+                self.messages['text'] = f'Pièce sélectionnée : {self.piece_a_deplacer} à la position {position}.'
+                self.messages['foreground'] = 'black'
+
+                #On supprime les pièces, dessine la case sélectionnée et redessine les pièces
+                self.canvas_echiquier.delete('piece')
+                self.canvas_echiquier.delete('select')
+
+                self.canvas_echiquier.create_rectangle(
+                    (event.x // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
+                    (event.y // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
+                    ((event.x // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
+                    ((event.y // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
+                    fill='pink', tags="select")
+
+                self.canvas_echiquier.dessiner_pieces()
+
+        if self.piece_a_deplacer is not None:
+
+            if self.partie.echiquier.deplacement_est_valide(self.position_piece_a_deplacer, self.position):
+                self.partie.echiquier.deplacer(self.position_piece_a_deplacer, position)
+
+                if self.partie.partie_terminee():
+                    self.messages['foreground'] = 'green'
+                    self.messages[
+                        'text'] = 'Partie terminée, les ' + self.partie.determiner_gagnant().upper() + ' ont gagné.\nOn recommence?!'
+
+                self.canvas_echiquier.raffraichir_cases()
+                self.canvas_echiquier.raffraichir_pieces()
+
+                self.partie.joueur_suivant()
+                self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
+                self.roi_en_rouge()
+
+
+
+
+    # def selectionner(self, event):
+    #     pass
         # # On trouve le numéro de ligne/colonne en divisant les positions en y/x par le nombre de pixels par case.
         # ligne = event.y // self.canvas_echiquier.n_pixels_par_case
         # colonne = event.x // self.canvas_echiquier.n_pixels_par_case
