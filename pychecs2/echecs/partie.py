@@ -4,6 +4,7 @@ dont un objet échiquier (une instance de la classe Echiquier).
 
 """
 from pychecs2.echecs.echiquier import Echiquier
+from pychecs2.echecs.piece import Roi
 import pickle
 
 
@@ -32,6 +33,7 @@ class Partie:
 
         self.listeDeplacements = []
         self.dernierDeplacement = []
+        self.listeDesEchiquiers = []
 
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
@@ -139,7 +141,6 @@ class Partie:
         print("reste blanc", self.gapBlanc)
 
 
-
     def joueur_suivant(self):
         """Change le joueur actif: passe de blanc à noir, ou de noir à blanc, selon la couleur du joueur actif.
 
@@ -148,6 +149,8 @@ class Partie:
             self.joueur_actif = 'noir'
         else:
             self.joueur_actif = 'blanc'
+
+
 
 
     def jouer(self):
@@ -170,6 +173,21 @@ class Partie:
         print(self.echiquier)
         print("\nPartie terminée! Le joueur {} a gagné".format(self.determiner_gagnant()))
 
+    def position_mon_roi(self, couleur_joueur_actif):
+        for position in self.echiquier.dictionnaire_pieces.keys():
+            if isinstance(self.echiquier.dictionnaire_pieces[position], Roi) \
+                    and self.echiquier.dictionnaire_pieces[position].couleur == couleur_joueur_actif:
+                return position
+
+    # Mélo
+    def mon_roi_en_echec(self):
+        position_roi = self.position_mon_roi(self.joueur_actif)
+        if self.joueur_actif == 'blanc':
+            autre_couleur = 'noir'
+        else:
+            autre_couleur = 'blanc'
+
+        return self.echiquier.case_est_menacee_par(position_roi, autre_couleur)
 
     def sauvegarder_partie(self):
         """
@@ -187,3 +205,11 @@ class Partie:
         # TODO documenter la méthode
 
 
+
+# aa = ['(blanc)f2=>f4', '(noir)d7=>d5']
+# print(', '.join(aa))
+#
+# dernierDeplacement = ("(" + piece.couleur + ")" + position_source + "=>" + position_cible])
+
+if __name__ == '__main__':
+    pass
