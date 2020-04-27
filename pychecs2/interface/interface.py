@@ -352,12 +352,14 @@ class Fenetre(Tk):
             self.canvas_echiquier.raffraichir_cases()
             self.roi_en_rouge()
             if self.canvas_echiquier.position_selectionnee:
-                self.canvas_echiquier.create_rectangle(
-                    (event.x // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
-                    (event.y // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
-                    ((event.x // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
-                    ((event.y // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
-                    fill='pink', tags="select")
+                #Mélo, pour ne pas que le carré s'affiche si on séléectionne une pièce adversaire:
+                if self.partie.echiquier.recuperer_piece_a_position(self.position_selectionnee).couleur == self.partie.joueur_actif:
+                    self.canvas_echiquier.create_rectangle(
+                        (event.x // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
+                        (event.y // self.canvas_echiquier.n_pixels_par_case) * self.canvas_echiquier.n_pixels_par_case,
+                        ((event.x // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
+                        ((event.y // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
+                        fill='pink', tags="select")
             self.canvas_echiquier.raffraichir_pieces()
             self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
 
