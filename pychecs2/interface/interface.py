@@ -232,8 +232,6 @@ class Fenetre(Tk):
         # On lie un clic sur le CanvasEchiquier à une méthode.
         self.canvas_echiquier.bind('<Button-1>', self.selectionner)
 
-
-
     def ouvrirURL(self):
         url = 'https://fr.wikipedia.org/wiki/Règles_du_jeu_d%27échecs'
         webbrowser.open_new(url)
@@ -262,11 +260,15 @@ class Fenetre(Tk):
         self.canvas_echiquier.raffraichir_pieces()
         self.liste1.delete(END)
         self.messages1['text'] = "Au tour du: " + self.partie.joueur_actif.upper()
-        for i in self.partie.gapBlanc:
-            self.liste2.insert(END, i)
-        self.liste3.delete(0, END)
-        for i in self.partie.gapNoir:
-            self.liste3.insert(END, i)
+        self.rafraichirPiecesMangees()
+
+    def rafraichirPiecesMangees(self):
+            self.liste2.delete(0, END)
+            for i in self.partie.gapBlanc:
+                self.liste2.insert(END, i)
+            self.liste3.delete(0, END)
+            for i in self.partie.gapNoir:
+                self.liste3.insert(END, i)
 
     def selectionner(self, event):
         # On trouve le numéro de ligne/colonne en divisant les positions en y/x par le nombre de pixels par case.
@@ -296,13 +298,7 @@ class Fenetre(Tk):
                 self.partie.deplacer(self.canvas_echiquier.position_selectionnee, position)
                 self.canvas_echiquier.position_selectionnee = None
                 self.liste1.insert(END, self.partie.dernierDeplacement)
-                self.liste2.delete(0, END)
-                for i in self.partie.gapBlanc:
-                    self.liste2.insert(END, i)
-                self.liste3.delete(0, END)
-                for i in self.partie.gapNoir:
-                    self.liste3.insert(END, i)
-
+                self.rafraichirPiecesMangees()
 
                 if self.partie.partie_terminee():
                     self.messages['foreground'] = 'green'
