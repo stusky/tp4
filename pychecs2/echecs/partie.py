@@ -151,6 +151,8 @@ class Partie:
             self.joueur_actif = 'blanc'
 
 
+
+
     def jouer(self):
         """Tant que la partie n'est pas terminée, joue la partie. À chaque tour :
             - On affiche l'échiquier.
