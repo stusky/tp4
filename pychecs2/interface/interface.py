@@ -398,13 +398,13 @@ class Fenetre(Tk):
                         'text'] = 'Partie terminée, les ' + self.partie.determiner_gagnant().upper() + ' ont gagné.\nOn recommence?!'
 
                 # Bloc pour affichage historique
-                self.liste1.insert(END, self.partie.dernierDeplacement)
-                self.liste2.delete(0, END)
-                for i in self.partie.gapBlanc:
-                    self.liste2.insert(END, i)
-                self.liste3.delete(0, END)
-                for i in self.partie.gapNoir:
-                    self.liste3.insert(END, i)
+                # self.liste1.insert(END, self.partie.dernierDeplacement)
+                # self.liste2.delete(0, END)
+                # for i in self.partie.gapBlanc:
+                #     self.liste2.insert(END, i)
+                # self.liste3.delete(0, END)
+                # for i in self.partie.gapNoir:
+                #     self.liste3.insert(END, i)
 
                 self.canvas_echiquier.raffraichir_cases()
                 self.canvas_echiquier.raffraichir_pieces()
