@@ -187,6 +187,8 @@ class Partie:
         else:
             autre_couleur = 'blanc'
 
+        if self.partie_terminee():
+            return False
         return self.echiquier.case_est_menacee_par(position_roi, autre_couleur)
 
     def sauvegarder_partie(self):

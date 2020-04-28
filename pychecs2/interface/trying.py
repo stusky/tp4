@@ -65,11 +65,6 @@ class Try(Fenetre):
 
 
 
-        # if self.piece_a_deplacer is not None:
-        #     print('yessir miller')
-        #
-
-
 
 fenetre = Try()
 fenetre.mainloop()
