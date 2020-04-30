@@ -35,6 +35,9 @@ class Partie:
         self.dernierDeplacement = []
         self.listeDesEchiquiers = []
 
+        self.gapBlanc = None
+        self.gapNoir = None
+
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
         le roi de la couleur adverse doit être absente de l'échiquier.
@@ -60,59 +63,25 @@ class Partie:
         """
         return self.determiner_gagnant() != 'aucun'
 
-    def demander_positions(self):
-        """Demande à l'utilisateur d'entrer les positions de départ et d'arrivée pour faire un déplacement. Si les
-        positions entrées sont valides (si le déplacement est valide), on retourne les deux positions. On doit
-        redemander tant que l'utilisateur ne donne pas des positions valides.
-
-        Returns:
-            str, str: Deux chaînes de caractères représentant les deux positions valides fournies par l'utilisateurs.
-
-        """
-        while True:
-            # On demande et valide la position source.
-            while True:
-                source = input("Entrez position source: ")
-                if self.echiquier.position_est_valide(source) and self.echiquier.couleur_piece_a_position(source) == self.joueur_actif:
-                    break
-
-                print("Position invalide.\n")
-
-            # On demande et valide la position cible.
-            cible = input("Entrez position cible: ")
-            if self.echiquier.deplacement_est_valide(source, cible):
-                return source, cible
-
-            print("Déplacement invalide.\n")
-
-    # def annulerDernierMouvement(self):
-    #     if len(self.listeDesEchiquiers) >= 2:
-    #         self.echiquier.dictionnaire_pieces = self.listeDesEchiquiers[-2]
-    #         self.listeDesEchiquiers = self.listeDesEchiquiers[:-2]
-    #     if len(self.listeDesEchiquiers) == 1:
-    #         self.echiquier.dictionnaire_pieces = self.listeDesEchiquiers[-1]
-    #         self.listeDesEchiquiers = self.listeDesEchiquiers[-1]
-    #     self.joueur_suivant()
-    #     print(self.echiquier.dictionnaire_pieces)
-    #     print(self.listeDesEchiquiers)
-
     def annulerDernierMouvement(self):
         self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
         self.joueur_suivant()
         #print(self.echiquier.listeDesEchiquiers)
+        # print(self.echiquier.listeDesEchiquiers)
+
         self.resteBlanc = set()
         self.resteNoir = set()
         for i in self.echiquier.dictionnaire_pieces.values():
-            if (i.est_blanc()):
+            if i.est_blanc():
                 self.resteBlanc.add(i)
             else:
                 self.resteNoir.add(i)
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
 
-
     #Thierry
     def deplacer(self, position_source, position_cible):
+
         piece = self.echiquier.recuperer_piece_a_position(position_source)
 
         if piece is None:
@@ -136,10 +105,10 @@ class Partie:
                 self.resteBlanc.add(i)
             else:
                 self.resteNoir.add(i)
+
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
-        #print("reste blanc", self.gapBlanc)
-
+        # print(self.gapBlanc)
 
     def joueur_suivant(self):
         """Change le joueur actif: passe de blanc à noir, ou de noir à blanc, selon la couleur du joueur actif.
@@ -149,9 +118,6 @@ class Partie:
             self.joueur_actif = 'noir'
         else:
             self.joueur_actif = 'blanc'
-
-
-
 
     def jouer(self):
         """Tant que la partie n'est pas terminée, joue la partie. À chaque tour :

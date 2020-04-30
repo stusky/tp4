@@ -29,10 +29,17 @@ class Echiquier:
         self.chiffres_rangees = ['1', '2', '3', '4', '5', '6', '7', '8']
         self.lettres_colonnes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
+        #Trucs a Thierry
+        self.listeDesEchiquiers = []
+
+        self.setBlanc = set()
+        self.setNoir = set()
+
         self.initialiser_echiquier_depart()
 
+
         # Mélo
-        self.hist = {}
+        # self.hist = {}
 
     def position_est_valide(self, position):
         """Vérifie si une position est valide (dans l'échiquier). Une position est une concaténation d'une lettre de
@@ -308,18 +315,19 @@ class Echiquier:
         return False
 
     def deplacer(self, position_source, position_cible):
-    #     """Effectue le déplacement d'une pièce en position source, vers la case en position cible. Vérifie d'abord
-    #     si le déplacement est valide, et ne fait rien (puis retourne False) dans ce cas. Si le déplacement est valide,
-    #     il est effectué (dans l'échiquier actuel) et la valeur True est retournée.
+        """Effectue le déplacement d'une pièce en position source, vers la case en position cible. Vérifie d'abord
+    #         si le déplacement est valide, et ne fait rien (puis retourne False) dans ce cas. Si le déplacement est valide,
+    #         il est effectué (dans l'échiquier actuel) et la valeur True est retournée.
     #
-    #     Args:
-    #         position_source (str): La position source.
-    #         position_cible (str): La position cible.
+    #         Args:
+    #             position_source (str): La position source.
+    #             position_cible (str): La position cible.
     #
-    #     Returns:
-    #         bool: True si le déplacement était valide et a été effectué, et False autrement.
+    #         Returns:
+    #             bool: True si le déplacement était valide et a été effectué, et False autrement.
     #
-    #     """
+    #     #     """
+
         if not self.deplacement_est_valide(position_source, position_cible):
             raise ErreurDeplacement("Le déplacement demandé n'est pas possible")
 
@@ -349,8 +357,6 @@ class Echiquier:
         dictionnaire_pieces de votre instance d'Echiquier.
 
         """
-
-        self.listeDesEchiquiers = []
         self.dictionnaire_pieces = {
             'a1': Tour('blanc'),
             'b1': Cavalier('blanc'),
@@ -387,10 +393,8 @@ class Echiquier:
         }
         self.listeDesEchiquiers.append(self.dictionnaire_pieces)
 
-        self.setBlanc = set()
-        self.setNoir = set()
         for i in self.listeDesEchiquiers[0].values():
-            if (i.est_blanc()):
+            if i.est_blanc():
                 self.setBlanc.add(i)
             else:
                 self.setNoir.add(i)
