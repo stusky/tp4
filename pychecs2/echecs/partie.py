@@ -139,7 +139,7 @@ class Partie:
 
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
-        #print(self.gapBlanc)
+
 
 
     def joueur_suivant(self):
@@ -202,16 +202,39 @@ class Partie:
     def charger_partie(self):
         """
         """
+        self.echiquier.initialiser_echiquier_depart()
+        # with open("sauvegarde", "rb") as f:
+        #     self.echiquier.dictionnaire_pieces = pickle.load(f)
+
         with open("sauvegarde", "rb") as f:
-            self.echiquier.dictionnaire_pieces = pickle.load(f)
+            echiquierCharger = pickle.load(f)
+        self.echiquier.listeDesEchiquiers.append(dict(echiquierCharger))
+
         # TODO documenter la méthode
+        self.resteBlanc = set()
+        self.resteNoir = set()
+        print('1Blanc', self.resteBlanc)
+        print('1Noir', self.resteNoir)
+        for i in echiquierCharger.values():
+            if i.est_blanc():
+                self.resteBlanc.add(i)
+            else:
+                self.resteNoir.add(i)
+        print("setBlanc", self.echiquier.setBlanc)
+        print("setNoir", self.echiquier.setNoir)
+        print("resteBlanc", self.resteBlanc)
+        print("resteNoir", self.resteNoir)
+        self.gapBlanc = list(set(self.echiquier.setBlanc) - set(self.resteBlanc))
+        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
+        print(self.gapBlanc)
+        print(self.gapNoir)
+        print("print diff Blanc", (self.echiquier.setBlanc - self.resteBlanc))
+        print("print diff Noir", (self.echiquier.setNoir - self.resteNoir))
 
 
 
-# aa = ['(blanc)f2=>f4', '(noir)d7=>d5']
-# print(', '.join(aa))
-#
-# dernierDeplacement = ("(" + piece.couleur + ")" + position_source + "=>" + position_cible])
+
+
 
 if __name__ == '__main__':
     pass

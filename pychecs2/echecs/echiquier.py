@@ -32,9 +32,6 @@ class Echiquier:
         #Trucs a Thierry
         self.listeDesEchiquiers = []
 
-        self.setBlanc = set()
-        self.setNoir = set()
-
         self.initialiser_echiquier_depart()
 
 
@@ -354,6 +351,8 @@ class Echiquier:
         dictionnaire_pieces de votre instance d'Echiquier.
 
         """
+        self.setBlanc = set()
+        self.setNoir = set()
 
         self.dictionnaire_pieces = {
             'a1': Tour('blanc'),

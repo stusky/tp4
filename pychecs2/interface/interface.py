@@ -189,7 +189,6 @@ class Fenetre(Tk):
 
 
 
-
         self.monSousFrame = Frame(self.monFramePrincipal)
         self.monSousFrame.grid(row=1, column=0, sticky='n')
 
@@ -198,7 +197,6 @@ class Fenetre(Tk):
         self.mon_frame2.grid(row=0, column=0, sticky='n')
         self.yScroll = Scrollbar(self.mon_frame2, orient=VERTICAL)
         self.yScroll.grid(row=0, column=1, sticky=N + S)
-        #small_font = font(size=5)
         self.liste2 = Listbox(self.mon_frame2, yscrollcommand=self.yScroll.set)
         self.liste2 = Listbox(self.mon_frame2, width=7)
         self.liste2.grid(row=0, column=0)
@@ -209,7 +207,6 @@ class Fenetre(Tk):
         self.mon_frame2.grid(row=0, column=1, sticky='n')
         self.yScroll = Scrollbar(self.mon_frame2, orient=VERTICAL)
         self.yScroll.grid(row=0, column=1, sticky=N + S)
-        #small_font = font(size=5)
         self.liste3 = Listbox(self.mon_frame2, yscrollcommand=self.yScroll.set)
         self.liste3 = Listbox(self.mon_frame2, width=7)
         self.liste3.grid(row=0, column=0)
@@ -289,6 +286,7 @@ class Fenetre(Tk):
         self.partie.charger_partie()
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
+        self.rafraichirPiecesMangees()
 
     def annulerDernierMouvement(self):
         self.partie.annulerDernierMouvement()
