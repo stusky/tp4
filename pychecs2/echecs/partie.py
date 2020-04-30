@@ -99,7 +99,7 @@ class Partie:
     def annulerDernierMouvement(self):
         self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
         self.joueur_suivant()
-        print(self.echiquier.listeDesEchiquiers)
+        #print(self.echiquier.listeDesEchiquiers)
         self.resteBlanc = set()
         self.resteNoir = set()
         for i in self.echiquier.dictionnaire_pieces.values():
@@ -138,7 +138,7 @@ class Partie:
                 self.resteNoir.add(i)
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
-        print("reste blanc", self.gapBlanc)
+        #print("reste blanc", self.gapBlanc)
 
 
     def joueur_suivant(self):

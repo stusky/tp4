@@ -203,7 +203,7 @@ class Fenetre(Tk):
         self.liste2.grid(row=0, column=0)
         self.yScroll['command'] = self.liste2.yview
 
-        # FRAME a DROITE: Fenetre pour afficher les pieces blanches mangées
+        # FRAME a DROITE: Fenetre pour afficher les pieces noires mangées
         self.mon_frame2 = LabelFrame(self.monSousFrame, text="Les noirs\nmangés ", borderwidth=2, relief=RIDGE, padx=5, pady=5, width=7)
         self.mon_frame2.grid(row=0, column=1, sticky='n')
         self.yScroll = Scrollbar(self.mon_frame2, orient=VERTICAL)
@@ -212,7 +212,7 @@ class Fenetre(Tk):
         self.liste3 = Listbox(self.mon_frame2, yscrollcommand=self.yScroll.set)
         self.liste3 = Listbox(self.mon_frame2, width=7)
         self.liste3.grid(row=0, column=0)
-        self.yScroll['command'] = self.liste2.yview
+        self.yScroll['command'] = self.liste3.yview
 
         # FRAME a DROITE: Bouton pour se connecter au site web des intrusctions d'echec
         self.mon_frame3 = Frame(self.monFramePrincipal, borderwidth=2, relief=RIDGE, padx=5, pady=5)
