@@ -39,7 +39,7 @@ class Echiquier:
 
 
         # Mélo
-        # self.hist = {}
+        self.hist = []
 
     def position_est_valide(self, position):
         """Vérifie si une position est valide (dans l'échiquier). Une position est une concaténation d'une lettre de
@@ -223,6 +223,30 @@ class Echiquier:
 
         return True
 
+    # Mélo
+    def roque_est_valide(self, position_source, position_cible):
+        couleur_adversaire = 'blanc'
+        rangee_origine = '8'
+
+        piece = self.recuperer_piece_a_position(position_source)
+        piece_cible = self.recuperer_piece_a_position(position_cible)
+
+        if piece.couleur == 'blanc':
+            couleur_adversaire = 'noir'
+            rangee_origine = '1'
+        if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and piece.couleur == piece_cible.couleur:
+            if position_cible[0] == 'a':
+                for colonne in self.lettres_colonnes[0:5]:
+
+                    if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
+                        return False
+                return True
+            else:
+                for colonne in self.lettres_colonnes[4:]:
+                    if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
+                        return False
+                return True
+
     def deplacement_est_valide(self, position_source, position_cible):
         """Vérifie si un déplacement serait valide dans l'échiquier actuel. Notez que chaque type de
         pièce se déplace de manière différente, vous voudrez probablement utiliser le polymorphisme :-).
@@ -244,8 +268,6 @@ class Echiquier:
         """
         # On s'assure que la position source contient une pièce.
         piece = self.recuperer_piece_a_position(position_source)
-        piece_cible = self.recuperer_piece_a_position(position_cible)
-
 
         if piece is None:
             return False
@@ -259,31 +281,6 @@ class Echiquier:
         if not piece.peut_sauter:
             if not self.chemin_libre_entre_positions(position_source, position_cible):
                 return False
-
-        # Mélo
-        # Roque
-        couleur_adversaire = 'blanc'
-        rangee_origine = '8'
-
-        if piece.couleur == 'blanc':
-            couleur_adversaire = 'noir'
-            rangee_origine = '1'
-
-        if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and piece.couleur == piece_cible.couleur:
-            if piece not in self.hist.keys() and piece_cible not in self.hist.keys():
-                if position_cible[0] == 'a':
-                    for colonne in self.lettres_colonnes[0:5]:
-                        if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
-                            return False
-                    return True
-                else:
-                    for colonne in self.lettres_colonnes[4:]:
-                        if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
-                            return False
-                    return True
-            return False
-        # Tout fonctionne, mais incompatible avec interface.
-        # En selectionnant le roi, puis la tour, la tour est le nouvel objet selectionne et on ne peut faire le roque.
 
         piece_cible = self.recuperer_piece_a_position(position_cible)
         if piece_cible is not None:
@@ -357,6 +354,7 @@ class Echiquier:
         dictionnaire_pieces de votre instance d'Echiquier.
 
         """
+
         self.dictionnaire_pieces = {
             'a1': Tour('blanc'),
             'b1': Cavalier('blanc'),

@@ -6,6 +6,7 @@ from tkinter import NSEW, Canvas, messagebox, Label, Tk, Button, LabelFrame, RID
 import webbrowser
 from pychecs2.echecs.partie import AucunePieceAPosition, MauvaiseCouleurPiece
 from pychecs2.echecs.echiquier import Echiquier, ErreurDeplacement
+from pychecs2.echecs.piece import Tour, Roi
 
 # Exemple d'importation de la classe Partie.
 from pychecs2.echecs.partie import Partie
@@ -380,6 +381,7 @@ class Fenetre(Tk):
             else: #2a
                 try: #i
                     self.partie.deplacer(self.position_piece_a_deplacer, position)
+
                     #Trucs a Thierry
                     self.canvas_echiquier.position_selectionnee = None
                     self.liste1.insert(END, self.partie.dernierDeplacement)
@@ -434,6 +436,7 @@ class Fenetre(Tk):
                 self.messages['text'] = f'Pièce sélectionnée : {self.piece_a_deplacer} à la position {position}.'
                 self.messages['foreground'] = 'black'
             elif self.piece_a_deplacer == piece_selectionnee: #1c
+
                 self.piece_a_deplacer = None
                 self.position_piece_a_deplacer = None
 
@@ -448,20 +451,64 @@ class Fenetre(Tk):
                 self.messages['text'] = f'Aucune pièce sélectionnée.'
                 self.messages['foreground'] = 'black'
             else:                                           # 1b
-                self.piece_a_deplacer = piece_selectionnee
-                self.position_piece_a_deplacer = position
+                #Roque
+                if isinstance(piece_selectionnee, Tour) and isinstance(self.piece_a_deplacer, Roi):
+                    try:
+                        self.partie.roquer(self.position_piece_a_deplacer, position)
 
-                # Dessin de l'echiquier
-                self.canvas_echiquier.delete('case')
-                self.canvas_echiquier.delete('piece')
-                self.canvas_echiquier.delete('select')
-                self.canvas_echiquier.dessiner_cases()
-                self.creer_carre_selection()
-                self.roi_en_rouge()
-                self.canvas_echiquier.dessiner_pieces()
+                        # Trucs a Thierry
+                        self.canvas_echiquier.position_selectionnee = None
+                        self.liste1.insert(END, self.partie.dernierDeplacement)
+                        self.liste2.delete(0, END)
+                        for i in self.partie.gapBlanc:
+                            self.liste2.insert(END, i)
+                        self.liste3.delete(0, END)
+                        for i in self.partie.gapNoir:
+                            self.liste3.insert(END, i)
 
-                self.messages['text'] = f'Pièce sélectionnée : {self.piece_a_deplacer} à la position {position}.'
-                self.messages['foreground'] = 'black'
+                        self.piece_a_deplacer = None
+                        self.position_piece_a_deplacer = None
+
+                        # Dessin de l'echiquier
+                        self.canvas_echiquier.delete('case')
+                        self.canvas_echiquier.delete('piece')
+                        self.canvas_echiquier.delete('select')
+                        self.canvas_echiquier.dessiner_cases()
+                        self.roi_en_rouge()
+                        self.canvas_echiquier.dessiner_pieces()
+
+                        self.messages['text'] = ''
+                    except:
+                        self.piece_a_deplacer = None
+                        self.position_piece_a_deplacer = None
+
+                        # Dessin de l'echiquier
+                        self.canvas_echiquier.delete('case')
+                        self.canvas_echiquier.delete('piece')
+                        self.canvas_echiquier.delete('select')
+                        self.canvas_echiquier.dessiner_cases()
+                        self.roi_en_rouge()
+                        self.canvas_echiquier.dessiner_pieces()
+
+                        self.messages['text'] = f"Le déplacement est invalide."
+                        self.messages['foreground'] = 'red'
+
+
+                else:
+                    self.piece_a_deplacer = piece_selectionnee
+                    self.position_piece_a_deplacer = position
+
+                    # Dessin de l'echiquier
+                    self.canvas_echiquier.delete('case')
+                    self.canvas_echiquier.delete('piece')
+                    self.canvas_echiquier.delete('select')
+                    self.canvas_echiquier.dessiner_cases()
+                    self.creer_carre_selection()
+                    self.roi_en_rouge()
+                    self.canvas_echiquier.dessiner_pieces()
+
+                    self.messages['text'] = f'Pièce sélectionnée : {self.piece_a_deplacer} à la position {position}.'
+                    self.messages['foreground'] = 'black'
 
 
         # 3
@@ -530,7 +577,6 @@ class Fenetre(Tk):
 
         self.messages1['text'] = "Au tour du joueur: " + self.partie.joueur_actif.upper()
 
-        self.roi_en_rouge()
 
 
         # #

@@ -38,6 +38,8 @@ class Partie:
         self.gapBlanc = None
         self.gapNoir = None
 
+        self.hist = []
+
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
         le roi de la couleur adverse doit être absente de l'échiquier.
@@ -79,15 +81,44 @@ class Partie:
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
 
+    def roquer(self, position_source, position_cible):
+        if self.echiquier.roque_est_valide(position_source, position_cible) and \
+                self.echiquier.recuperer_piece_a_position(position_source) not in self.hist and \
+                self.echiquier.recuperer_piece_a_position(position_cible) not in self.hist:
+            if ord(position_source[0]) > ord(position_cible[0]):
+                position_roi = 'c' + position_source[1]
+                self.echiquier.dictionnaire_pieces[position_roi] = \
+                    self.echiquier.recuperer_piece_a_position(position_source)
+                del self.echiquier.dictionnaire_pieces[position_source]
+
+                position_tour = 'd' + position_cible[1]
+                self.echiquier.dictionnaire_pieces[position_tour] = \
+                    self.echiquier.recuperer_piece_a_position(position_cible)
+                del self.echiquier.dictionnaire_pieces[position_cible]
+            else:
+                position_roi = 'g' + position_source[1]
+                self.echiquier.dictionnaire_pieces[position_roi] = \
+                    self.echiquier.recuperer_piece_a_position(position_source)
+                del self.echiquier.dictionnaire_pieces[position_source]
+
+                position_tour = 'f' + position_cible[1]
+                self.echiquier.dictionnaire_pieces[position_tour] = \
+                    self.echiquier.recuperer_piece_a_position(position_cible)
+                del self.echiquier.dictionnaire_pieces[position_cible]
+
+        self.joueur_suivant()
+
     #Thierry
     def deplacer(self, position_source, position_cible):
-
         piece = self.echiquier.recuperer_piece_a_position(position_source)
 
-        if piece is None:
-            raise AucunePieceAPosition("Aucune piece à cet endroit!")
-        elif piece.couleur != self.joueur_actif:
-            raise MauvaiseCouleurPiece("La pièce source n'appartient pas au joueur actif!")
+        # if piece is None:
+        #     raise AucunePieceAPosition("Aucune piece à cet endroit!")
+        # elif piece.couleur != self.joueur_actif:
+        #     raise MauvaiseCouleurPiece("La pièce source n'appartient pas au joueur actif!")
+
+        if self.echiquier.deplacement_est_valide(position_source, position_cible):
+            self.hist.append(piece)
 
         self.echiquier.deplacer(position_source, position_cible)
         self.joueur_suivant()
@@ -108,7 +139,8 @@ class Partie:
 
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
-        # print(self.gapBlanc)
+        #print(self.gapBlanc)
+
 
     def joueur_suivant(self):
         """Change le joueur actif: passe de blanc à noir, ou de noir à blanc, selon la couleur du joueur actif.
@@ -118,6 +150,9 @@ class Partie:
             self.joueur_actif = 'noir'
         else:
             self.joueur_actif = 'blanc'
+
+
+
 
     def jouer(self):
         """Tant que la partie n'est pas terminée, joue la partie. À chaque tour :
@@ -163,7 +198,6 @@ class Partie:
         with open("sauvegarde", "wb") as f:
             pickle.dump(self.echiquier.dictionnaire_pieces, f)
         #TODO documenter la méthode
-
 
     def charger_partie(self):
         """
