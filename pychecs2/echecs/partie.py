@@ -4,7 +4,7 @@ dont un objet échiquier (une instance de la classe Echiquier).
 
 """
 from pychecs2.echecs.echiquier import Echiquier
-from pychecs2.echecs.piece import Roi
+from pychecs2.echecs.piece import Roi, Tour
 import pickle
 
 
@@ -33,10 +33,9 @@ class Partie:
 
         self.listeDeplacements = []
         self.dernierDeplacement = []
-        self.listeDesEchiquiers = []
 
-        self.gapBlanc = None
-        self.gapNoir = None
+        # self.gapBlanc = None
+        # self.gapNoir = None
 
         self.hist = []
 
@@ -66,10 +65,18 @@ class Partie:
         return self.determiner_gagnant() != 'aucun'
 
     def annulerDernierMouvement(self):
-        self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
-        self.joueur_suivant()
-        #print(self.echiquier.listeDesEchiquiers)
-        # print(self.echiquier.listeDesEchiquiers)
+        # self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
+
+        if len(self.echiquier.listeDesEchiquiers) <= 2:
+            self.echiquier.initialiser_echiquier_depart()
+            self.joueur_actif = 'blanc'
+
+        else:
+            del self.echiquier.listeDesEchiquiers[-1]
+            self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-1]
+            self.joueur_suivant()
+        print(len(self.echiquier.listeDesEchiquiers))
+
 
         self.resteBlanc = set()
         self.resteNoir = set()
@@ -81,32 +88,80 @@ class Partie:
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
 
-    def roquer(self, position_source, position_cible):
-        if self.echiquier.roque_est_valide(position_source, position_cible) and \
+    # Mélo
+    def roque_est_valide(self, position_source, position_cible):
+        couleur_adversaire = 'blanc'
+        rangee_origine = '8'
+
+        piece = self.echiquier.recuperer_piece_a_position(position_source)
+        piece_cible = self.echiquier.recuperer_piece_a_position(position_cible)
+
+        if piece.couleur == 'blanc':
+            couleur_adversaire = 'noir'
+            rangee_origine = '1'
+
+        if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and\
+                piece.couleur == piece_cible.couleur and\
                 self.echiquier.recuperer_piece_a_position(position_source) not in self.hist and \
                 self.echiquier.recuperer_piece_a_position(position_cible) not in self.hist:
-            if ord(position_source[0]) > ord(position_cible[0]):
-                position_roi = 'c' + position_source[1]
-                self.echiquier.dictionnaire_pieces[position_roi] = \
-                    self.echiquier.recuperer_piece_a_position(position_source)
-                del self.echiquier.dictionnaire_pieces[position_source]
+            if position_cible[0] == 'a':
+                for colonne in self.echiquier.lettres_colonnes[0:5]:
 
-                position_tour = 'd' + position_cible[1]
-                self.echiquier.dictionnaire_pieces[position_tour] = \
-                    self.echiquier.recuperer_piece_a_position(position_cible)
-                del self.echiquier.dictionnaire_pieces[position_cible]
+                    if self.echiquier.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
+                        return False
+                return True
             else:
-                position_roi = 'g' + position_source[1]
-                self.echiquier.dictionnaire_pieces[position_roi] = \
-                    self.echiquier.recuperer_piece_a_position(position_source)
-                del self.echiquier.dictionnaire_pieces[position_source]
+                for colonne in self.echiquier.lettres_colonnes[4:]:
+                    if self.echiquier.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
+                        return False
+                return True
 
-                position_tour = 'f' + position_cible[1]
-                self.echiquier.dictionnaire_pieces[position_tour] = \
-                    self.echiquier.recuperer_piece_a_position(position_cible)
-                del self.echiquier.dictionnaire_pieces[position_cible]
+
+    def roquer(self, position_source, position_cible):
 
         self.joueur_suivant()
+        if ord(position_source[0]) > ord(position_cible[0]):
+            position_roi = 'c' + position_source[1]
+            self.echiquier.dictionnaire_pieces[position_roi] = \
+                self.echiquier.recuperer_piece_a_position(position_source)
+            del self.echiquier.dictionnaire_pieces[position_source]
+
+            position_tour = 'd' + position_cible[1]
+            self.echiquier.dictionnaire_pieces[position_tour] = \
+                self.echiquier.recuperer_piece_a_position(position_cible)
+            del self.echiquier.dictionnaire_pieces[position_cible]
+        else:
+            position_roi = 'g' + position_source[1]
+            self.echiquier.dictionnaire_pieces[position_roi] = \
+                self.echiquier.recuperer_piece_a_position(position_source)
+            del self.echiquier.dictionnaire_pieces[position_source]
+
+            position_tour = 'f' + position_cible[1]
+            self.echiquier.dictionnaire_pieces[position_tour] = \
+                self.echiquier.recuperer_piece_a_position(position_cible)
+            del self.echiquier.dictionnaire_pieces[position_cible]
+
+
+
+        #Trucs a Thierry
+        piece = self.echiquier.recuperer_piece_a_position(position_source)
+        self.dernierDeplacement = ["(" + self.joueur_actif + ")" + position_source + "->" + position_cible]
+        self.listeDeplacements.append(self.dernierDeplacement)
+
+
+        echiquierCopy = dict(self.echiquier.dictionnaire_pieces)
+        self.echiquier.listeDesEchiquiers.append(echiquierCopy)
+
+        self.resteBlanc = set()
+        self.resteNoir = set()
+        for i in self.echiquier.dictionnaire_pieces.values():
+            if (i.est_blanc()):
+                self.resteBlanc.add(i)
+            else:
+                self.resteNoir.add(i)
+
+        self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
+        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
 
     #Thierry
     def deplacer(self, position_source, position_cible):
@@ -117,17 +172,19 @@ class Partie:
         # elif piece.couleur != self.joueur_actif:
         #     raise MauvaiseCouleurPiece("La pièce source n'appartient pas au joueur actif!")
 
+        #Pour le roque
         if self.echiquier.deplacement_est_valide(position_source, position_cible):
             self.hist.append(piece)
 
+
         self.echiquier.deplacer(position_source, position_cible)
+
         self.joueur_suivant()
         self.dernierDeplacement = ["(" + piece.couleur + ")" + position_source + "->" + position_cible]
         self.listeDeplacements.append(self.dernierDeplacement)
 
         echiquierCopy = dict(self.echiquier.dictionnaire_pieces)
         self.echiquier.listeDesEchiquiers.append(echiquierCopy)
-
 
         self.resteBlanc = set()
         self.resteNoir = set()
@@ -151,9 +208,6 @@ class Partie:
         else:
             self.joueur_actif = 'blanc'
 
-
-
-
     def jouer(self):
         """Tant que la partie n'est pas terminée, joue la partie. À chaque tour :
             - On affiche l'échiquier.
@@ -164,15 +218,15 @@ class Partie:
         Une fois la partie terminée, on félicite le joueur gagnant!
 
         """
-        while not self.partie_terminee():
-            print(self.echiquier)
-            print("\nAu tour du joueur {}".format(self.joueur_actif))
-            source, cible = self.demander_positions()
-            self.echiquier.deplacer(source, cible)
-            self.joueur_suivant()
-
-        print(self.echiquier)
-        print("\nPartie terminée! Le joueur {} a gagné".format(self.determiner_gagnant()))
+        # while not self.partie_terminee():
+        #     print(self.echiquier)
+        #     print("\nAu tour du joueur {}".format(self.joueur_actif))
+        #     source, cible = self.demander_positions()
+        #     self.echiquier.deplacer(source, cible)
+        #     self.joueur_suivant()
+        #
+        # print(self.echiquier)
+        # print("\nPartie terminée! Le joueur {} a gagné".format(self.determiner_gagnant()))
 
     def position_mon_roi(self, couleur_joueur_actif):
         for position in self.echiquier.dictionnaire_pieces.keys():

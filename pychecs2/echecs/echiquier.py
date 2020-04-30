@@ -32,6 +32,9 @@ class Echiquier:
         #Trucs a Thierry
         self.listeDesEchiquiers = []
 
+        self.setBlanc = set()
+        self.setNoir = set()
+
         self.initialiser_echiquier_depart()
 
 
@@ -220,29 +223,6 @@ class Echiquier:
 
         return True
 
-    # Mélo
-    def roque_est_valide(self, position_source, position_cible):
-        couleur_adversaire = 'blanc'
-        rangee_origine = '8'
-
-        piece = self.recuperer_piece_a_position(position_source)
-        piece_cible = self.recuperer_piece_a_position(position_cible)
-
-        if piece.couleur == 'blanc':
-            couleur_adversaire = 'noir'
-            rangee_origine = '1'
-        if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and piece.couleur == piece_cible.couleur:
-            if position_cible[0] == 'a':
-                for colonne in self.lettres_colonnes[0:5]:
-
-                    if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
-                        return False
-                return True
-            else:
-                for colonne in self.lettres_colonnes[4:]:
-                    if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
-                        return False
-                return True
 
     def deplacement_est_valide(self, position_source, position_cible):
         """Vérifie si un déplacement serait valide dans l'échiquier actuel. Notez que chaque type de
@@ -351,9 +331,7 @@ class Echiquier:
         dictionnaire_pieces de votre instance d'Echiquier.
 
         """
-        self.setBlanc = set()
-        self.setNoir = set()
-
+        self.listeDesEchiquiers = []
         self.dictionnaire_pieces = {
             'a1': Tour('blanc'),
             'b1': Cavalier('blanc'),
@@ -388,7 +366,7 @@ class Echiquier:
             'g8': Cavalier('noir'),
             'h8': Tour('noir'),
         }
-        self.listeDesEchiquiers.append(self.dictionnaire_pieces)
+        self.listeDesEchiquiers.append(dict(self.dictionnaire_pieces))
 
         for i in self.listeDesEchiquiers[0].values():
             if i.est_blanc():
