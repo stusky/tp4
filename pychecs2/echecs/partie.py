@@ -32,11 +32,11 @@ class Partie:
         self.echiquier = Echiquier()
 
         self.listeDeplacements = []
-        self.dernierDeplacement = []
-        self.listeDesEchiquiers = []
+        # self.dernierDeplacement = []
+        # self.listeDesEchiquiers = []
 
-        self.gapBlanc = None
-        self.gapNoir = None
+        # self.gapBlanc = None
+        # self.gapNoir = None
 
         self.hist = []
 
@@ -66,9 +66,12 @@ class Partie:
         return self.determiner_gagnant() != 'aucun'
 
     def annulerDernierMouvement(self):
-        self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
+        # self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
+
+
+        del self.echiquier.listeDesEchiquiers[-1]
+        self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-1]
         self.joueur_suivant()
-        #print(self.echiquier.listeDesEchiquiers)
         # print(self.echiquier.listeDesEchiquiers)
 
         self.resteBlanc = set()
@@ -108,6 +111,25 @@ class Partie:
 
         self.joueur_suivant()
 
+        #Trucs a Thierry
+        piece = self.echiquier.recuperer_piece_a_position(position_source)
+        self.dernierDeplacement = ["(" + piece.couleur + ")" + position_source + "->" + position_cible]
+        self.listeDeplacements.append(self.dernierDeplacement)
+
+        echiquierCopy = dict(self.echiquier.dictionnaire_pieces)
+        self.echiquier.listeDesEchiquiers.append(echiquierCopy)
+
+        self.resteBlanc = set()
+        self.resteNoir = set()
+        for i in self.echiquier.dictionnaire_pieces.values():
+            if (i.est_blanc()):
+                self.resteBlanc.add(i)
+            else:
+                self.resteNoir.add(i)
+
+        self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
+        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
+
     #Thierry
     def deplacer(self, position_source, position_cible):
         piece = self.echiquier.recuperer_piece_a_position(position_source)
@@ -117,6 +139,7 @@ class Partie:
         # elif piece.couleur != self.joueur_actif:
         #     raise MauvaiseCouleurPiece("La pièce source n'appartient pas au joueur actif!")
 
+        #Pour le roque
         if self.echiquier.deplacement_est_valide(position_source, position_cible):
             self.hist.append(piece)
 
@@ -150,9 +173,6 @@ class Partie:
             self.joueur_actif = 'noir'
         else:
             self.joueur_actif = 'blanc'
-
-
-
 
     def jouer(self):
         """Tant que la partie n'est pas terminée, joue la partie. À chaque tour :
