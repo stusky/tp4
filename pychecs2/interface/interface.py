@@ -29,9 +29,6 @@ class CanvasEchiquier(Canvas):
         self.lettres_colonnes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
 
-        # La position sélectionnée.
-        self.position_selectionnee = None
-
         self.partie = partie
 
 
@@ -291,16 +288,17 @@ class Fenetre(Tk):
         self.canvas_echiquier.raffraichir_pieces()
 
     def annulerDernierMouvement(self):
-        try:
-            self.partie.annulerDernierMouvement()
-            self.canvas_echiquier.raffraichir_cases()
-            self.canvas_echiquier.raffraichir_pieces()
-            self.liste1.delete(END)
-            self.messages1['text'] = "Au tour du joueur: " + self.partie.joueur_actif.upper()
-            self.rafraichirPiecesMangees()
-        except:
-            self.messages['text'] = "Vous ne pouvez pas retourner davantage en arrière."
-            self.messages['foreground'] = 'red'
+        # try:
+        self.partie.annulerDernierMouvement()
+        self.canvas_echiquier.raffraichir_cases()
+        self.canvas_echiquier.raffraichir_pieces()
+
+        self.liste1.delete(END)
+        self.messages1['text'] = "Au tour du joueur: " + self.partie.joueur_actif.upper()
+        self.rafraichirPiecesMangees()
+        # except:
+        #     self.messages['text'] = "Vous ne pouvez pas retourner davantage en arrière."
+        #     self.messages['foreground'] = 'red'
 
     def rafraichirPiecesMangees(self):
             self.liste2.delete(0, END)
@@ -387,7 +385,6 @@ class Fenetre(Tk):
                     self.partie.deplacer(self.position_piece_a_deplacer, position)
 
                     #Trucs a Thierry
-                    self.canvas_echiquier.position_selectionnee = None
                     self.liste1.insert(END, self.partie.dernierDeplacement)
                     self.liste2.delete(0, END)
                     for i in self.partie.gapBlanc:
@@ -461,7 +458,6 @@ class Fenetre(Tk):
                     self.partie.roquer(self.position_piece_a_deplacer, position)
 
                     # Trucs a Thierry
-                    self.canvas_echiquier.position_selectionnee = None
                     self.liste1.insert(END, self.partie.dernierDeplacement)
                     self.liste2.delete(0, END)
                     for i in self.partie.gapBlanc:
@@ -532,7 +528,6 @@ class Fenetre(Tk):
                     self.partie.deplacer(self.position_piece_a_deplacer, position)
 
                     # Trucs a Thierry
-                    self.canvas_echiquier.position_selectionnee = None
                     self.liste1.insert(END, self.partie.dernierDeplacement)
                     self.liste2.delete(0, END)
                     for i in self.partie.gapBlanc:

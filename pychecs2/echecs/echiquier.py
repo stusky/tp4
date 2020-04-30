@@ -354,7 +354,7 @@ class Echiquier:
         dictionnaire_pieces de votre instance d'Echiquier.
 
         """
-
+        self.listeDesEchiquiers = []
         self.dictionnaire_pieces = {
             'a1': Tour('blanc'),
             'b1': Cavalier('blanc'),
@@ -389,7 +389,7 @@ class Echiquier:
             'g8': Cavalier('noir'),
             'h8': Tour('noir'),
         }
-        self.listeDesEchiquiers.append(self.dictionnaire_pieces)
+        self.listeDesEchiquiers.append(dict(self.dictionnaire_pieces))
 
         for i in self.listeDesEchiquiers[0].values():
             if i.est_blanc():
