@@ -4,7 +4,7 @@ dont un objet échiquier (une instance de la classe Echiquier).
 
 """
 from pychecs2.echecs.echiquier import Echiquier
-from pychecs2.echecs.piece import Roi
+from pychecs2.echecs.piece import Roi, Tour
 import pickle
 
 
@@ -88,32 +88,58 @@ class Partie:
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
 
+    # Mélo
+    def roque_est_valide(self, position_source, position_cible):
+        couleur_adversaire = 'blanc'
+        rangee_origine = '8'
+
+        piece = self.echiquier.recuperer_piece_a_position(position_source)
+        piece_cible = self.echiquier.recuperer_piece_a_position(position_cible)
+
+        if piece.couleur == 'blanc':
+            couleur_adversaire = 'noir'
+            rangee_origine = '1'
+
+        if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and\
+                piece.couleur == piece_cible.couleur and\
+                self.echiquier.recuperer_piece_a_position(position_source) not in self.hist and \
+                self.echiquier.recuperer_piece_a_position(position_cible) not in self.hist:
+            if position_cible[0] == 'a':
+                for colonne in self.echiquier.lettres_colonnes[0:5]:
+
+                    if self.echiquier.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
+                        return False
+                return True
+            else:
+                for colonne in self.echiquier.lettres_colonnes[4:]:
+                    if self.echiquier.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
+                        return False
+                return True
+
 
     def roquer(self, position_source, position_cible):
 
-        if self.echiquier.roque_est_valide(position_source, position_cible) and \
-                self.echiquier.recuperer_piece_a_position(position_source) not in self.hist and \
-                self.echiquier.recuperer_piece_a_position(position_cible) not in self.hist:
-            if ord(position_source[0]) > ord(position_cible[0]):
-                position_roi = 'c' + position_source[1]
-                self.echiquier.dictionnaire_pieces[position_roi] = \
-                    self.echiquier.recuperer_piece_a_position(position_source)
-                del self.echiquier.dictionnaire_pieces[position_source]
+        self.joueur_suivant()
+        if ord(position_source[0]) > ord(position_cible[0]):
+            position_roi = 'c' + position_source[1]
+            self.echiquier.dictionnaire_pieces[position_roi] = \
+                self.echiquier.recuperer_piece_a_position(position_source)
+            del self.echiquier.dictionnaire_pieces[position_source]
 
-                position_tour = 'd' + position_cible[1]
-                self.echiquier.dictionnaire_pieces[position_tour] = \
-                    self.echiquier.recuperer_piece_a_position(position_cible)
-                del self.echiquier.dictionnaire_pieces[position_cible]
-            else:
-                position_roi = 'g' + position_source[1]
-                self.echiquier.dictionnaire_pieces[position_roi] = \
-                    self.echiquier.recuperer_piece_a_position(position_source)
-                del self.echiquier.dictionnaire_pieces[position_source]
+            position_tour = 'd' + position_cible[1]
+            self.echiquier.dictionnaire_pieces[position_tour] = \
+                self.echiquier.recuperer_piece_a_position(position_cible)
+            del self.echiquier.dictionnaire_pieces[position_cible]
+        else:
+            position_roi = 'g' + position_source[1]
+            self.echiquier.dictionnaire_pieces[position_roi] = \
+                self.echiquier.recuperer_piece_a_position(position_source)
+            del self.echiquier.dictionnaire_pieces[position_source]
 
-                position_tour = 'f' + position_cible[1]
-                self.echiquier.dictionnaire_pieces[position_tour] = \
-                    self.echiquier.recuperer_piece_a_position(position_cible)
-                del self.echiquier.dictionnaire_pieces[position_cible]
+            position_tour = 'f' + position_cible[1]
+            self.echiquier.dictionnaire_pieces[position_tour] = \
+                self.echiquier.recuperer_piece_a_position(position_cible)
+            del self.echiquier.dictionnaire_pieces[position_cible]
 
 
 
@@ -122,10 +148,8 @@ class Partie:
         self.dernierDeplacement = ["(" + self.joueur_actif + ")" + position_source + "->" + position_cible]
         self.listeDeplacements.append(self.dernierDeplacement)
 
-        self.joueur_suivant()
 
         echiquierCopy = dict(self.echiquier.dictionnaire_pieces)
-        self.echiquier.listeDesEchiquiers.append(echiquierCopy)
         self.echiquier.listeDesEchiquiers.append(echiquierCopy)
 
         self.resteBlanc = set()
@@ -162,8 +186,6 @@ class Partie:
         echiquierCopy = dict(self.echiquier.dictionnaire_pieces)
         self.echiquier.listeDesEchiquiers.append(echiquierCopy)
 
-        print(echiquierCopy)
-        print(len(self.echiquier.listeDesEchiquiers))
         self.resteBlanc = set()
         self.resteNoir = set()
         for i in self.echiquier.dictionnaire_pieces.values():

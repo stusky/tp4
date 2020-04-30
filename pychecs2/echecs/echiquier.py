@@ -223,29 +223,6 @@ class Echiquier:
 
         return True
 
-    # Mélo
-    def roque_est_valide(self, position_source, position_cible):
-        couleur_adversaire = 'blanc'
-        rangee_origine = '8'
-
-        piece = self.recuperer_piece_a_position(position_source)
-        piece_cible = self.recuperer_piece_a_position(position_cible)
-
-        if piece.couleur == 'blanc':
-            couleur_adversaire = 'noir'
-            rangee_origine = '1'
-        if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and piece.couleur == piece_cible.couleur:
-            if position_cible[0] == 'a':
-                for colonne in self.lettres_colonnes[0:5]:
-
-                    if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
-                        return False
-                return True
-            else:
-                for colonne in self.lettres_colonnes[4:]:
-                    if self.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
-                        return False
-                return True
 
     def deplacement_est_valide(self, position_source, position_cible):
         """Vérifie si un déplacement serait valide dans l'échiquier actuel. Notez que chaque type de
