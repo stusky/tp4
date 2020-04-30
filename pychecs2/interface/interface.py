@@ -271,6 +271,8 @@ class Fenetre(Tk):
 
     def reinitialiser(self):
         self.partie.echiquier.initialiser_echiquier_depart()
+        self.partie.joueur_actif = 'blanc'
+        self.messages['text'] = ''
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
         self.liste1.delete(0, END)
