@@ -32,8 +32,7 @@ class Echiquier:
         #Trucs a Thierry
         self.listeDesEchiquiers = []
 
-        self.setBlanc = set()
-        self.setNoir = set()
+
 
         self.initialiser_echiquier_depart()
 
@@ -368,6 +367,8 @@ class Echiquier:
         }
         self.listeDesEchiquiers.append(dict(self.dictionnaire_pieces))
 
+        self.setBlanc = set()
+        self.setNoir = set()
         for i in self.listeDesEchiquiers[0].values():
             if i.est_blanc():
                 self.setBlanc.add(i)

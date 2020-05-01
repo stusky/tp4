@@ -290,17 +290,17 @@ class Fenetre(Tk):
         self.canvas_echiquier.raffraichir_pieces()
 
     def annulerDernierMouvement(self):
-        # try:
-        self.partie.annulerDernierMouvement()
-        self.canvas_echiquier.raffraichir_cases()
-        self.canvas_echiquier.raffraichir_pieces()
+        try:
+            self.partie.annulerDernierMouvement()
+            self.canvas_echiquier.raffraichir_cases()
+            self.canvas_echiquier.raffraichir_pieces()
 
-        self.liste1.delete(END)
-        self.messages1['text'] = "Au tour du joueur: " + self.partie.joueur_actif.upper()
-        self.rafraichirPiecesMangees()
-        # except:
-        #     self.messages['text'] = "Vous ne pouvez pas retourner davantage en arrière."
-        #     self.messages['foreground'] = 'red'
+            self.liste1.delete(END)
+            self.messages1['text'] = "Au tour du joueur: " + self.partie.joueur_actif.upper()
+            self.rafraichirPiecesMangees()
+        except:
+            self.messages['text'] = "Vous ne pouvez pas retourner davantage en arrière."
+            self.messages['foreground'] = 'red'
 
     def rafraichirPiecesMangees(self):
             self.liste2.delete(0, END)

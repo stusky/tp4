@@ -167,11 +167,6 @@ class Partie:
     def deplacer(self, position_source, position_cible):
         piece = self.echiquier.recuperer_piece_a_position(position_source)
 
-        # if piece is None:
-        #     raise AucunePieceAPosition("Aucune piece à cet endroit!")
-        # elif piece.couleur != self.joueur_actif:
-        #     raise MauvaiseCouleurPiece("La pièce source n'appartient pas au joueur actif!")
-
         #Pour le roque
         if self.echiquier.deplacement_est_valide(position_source, position_cible):
             self.hist.append(piece)
@@ -189,14 +184,16 @@ class Partie:
         self.resteBlanc = set()
         self.resteNoir = set()
         for i in self.echiquier.dictionnaire_pieces.values():
-            if (i.est_blanc()):
+            if i.est_blanc():
                 self.resteBlanc.add(i)
             else:
                 self.resteNoir.add(i)
 
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
-        #print(self.gapBlanc)
+        print(self.echiquier.setBlanc)
+        print(self.resteBlanc)
+        print(self.gapBlanc)
 
 
     def joueur_suivant(self):
