@@ -167,6 +167,7 @@ class Partie:
     def deplacer(self, position_source, position_cible):
         piece = self.echiquier.recuperer_piece_a_position(position_source)
 
+
         # if piece is None:
         #     raise AucunePieceAPosition("Aucune piece à cet endroit!")
         # elif piece.couleur != self.joueur_actif:
@@ -196,6 +197,8 @@ class Partie:
 
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
+
+
 
 
 
@@ -246,44 +249,78 @@ class Partie:
             return False
         return self.echiquier.case_est_menacee_par(position_roi, autre_couleur)
 
+    # def sauvegarder_partie(self):
+    #     """
+    #     """
+    #     with open("sauvegarde", "wb") as f:
+    #         pickle.dump(self.echiquier.dictionnaire_pieces, f)
+    #     #TODO documenter la méthode
+    #
+    # def charger_partie(self):
+    #     """
+    #     """
+    #     self.echiquier.initialiser_echiquier_depart()
+    #     with open("sauvegarde", "rb") as f:
+    #         self.echiquier.dictionnaire_pieces = pickle.load(f)
+    #     print("w", type(self.echiquier.dictionnaire_pieces), self.echiquier.dictionnaire_pieces)
+    #
+    #     liste1 = []
+    #     for i in self.echiquier.dictionnaire_pieces.values():
+    #         print('a', type(i).__name__)
+    #     print(liste1)
+    #
+    #     liste2 = []
+    #     for i in self.echiquier.setBlanc:
+    #         print('b', type(i).__name__)
+    #     print(liste2)
+    #
+    #     for i in liste1:
+    #         print(i)
+    #         if i in liste2:
+    #             print(True)
+
+    # Ivan
     def sauvegarder_partie(self):
-        """
-        """
-        with open("sauvegarde", "wb") as f:
-            pickle.dump(self.echiquier.dictionnaire_pieces, f)
-        #TODO documenter la méthode
+        with open('sauvegarde.txt', 'w') as fp:
+            fp.write('\n'.join(self.historique))
 
+    # Ivan
     def charger_partie(self):
-        """
-        """
-        self.echiquier.initialiser_echiquier_depart()
+
+        self.echiquier = Echiquier()
+
+        with open('sauvegarde.txt', 'r') as fp:
+            lignes = fp.read()
+
+            for jeu in lignes.split('\n'):
+                source, cible = jeu.split('-')
+                self.echiquier.deplacer(source, cible)
+
+        #
         # with open("sauvegarde", "rb") as f:
-        #     self.echiquier.dictionnaire_pieces = pickle.load(f)
-
-        with open("sauvegarde", "rb") as f:
-            echiquierCharger = pickle.load(f)
-        self.echiquier.listeDesEchiquiers.append(dict(echiquierCharger))
-
-        # TODO documenter la méthode
-        self.resteBlanc = set()
-        self.resteNoir = set()
-        print('1Blanc', self.resteBlanc)
-        print('1Noir', self.resteNoir)
-        for i in echiquierCharger.values():
-            if i.est_blanc():
-                self.resteBlanc.add(i)
-            else:
-                self.resteNoir.add(i)
-        print("setBlanc", self.echiquier.setBlanc)
-        print("setNoir", self.echiquier.setNoir)
-        print("resteBlanc", self.resteBlanc)
-        print("resteNoir", self.resteNoir)
-        self.gapBlanc = list(set(self.echiquier.setBlanc) - set(self.resteBlanc))
-        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
-        print(self.gapBlanc)
-        print(self.gapNoir)
-        print("print diff Blanc", (self.echiquier.setBlanc - self.resteBlanc))
-        print("print diff Noir", (self.echiquier.setNoir - self.resteNoir))
+        #     echiquierCharger = pickle.load(f)
+        # self.echiquier.listeDesEchiquiers.append(dict(echiquierCharger))
+        #
+        # # TODO documenter la méthode
+        # self.resteBlanc = set()
+        # self.resteNoir = set()
+        # print('1Blanc', self.resteBlanc)
+        # print('1Noir', self.resteNoir)
+        # for i in echiquierCharger.values():
+        #     if i.est_blanc():
+        #         self.resteBlanc.add(i)
+        #     else:
+        #         self.resteNoir.add(i)
+        # print("setBlanc", self.echiquier.setBlanc)
+        # print("setNoir", self.echiquier.setNoir)
+        # print("resteBlanc", self.resteBlanc)
+        # print("resteNoir", self.resteNoir)
+        # self.gapBlanc = list(set(self.echiquier.setBlanc) - set(self.resteBlanc))
+        # self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
+        # print(self.gapBlanc)
+        # print(self.gapNoir)
+        # print("print diff Blanc", (self.echiquier.setBlanc - self.resteBlanc))
+        # print("print diff Noir", (self.echiquier.setNoir - self.resteNoir))
 
 
 

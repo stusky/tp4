@@ -215,6 +215,10 @@ class Fenetre(Tk):
         but1 = Button(self.mon_frame3, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
 
 
+        # FRAME a DROITE: Bouton pour se connecter au site web des intrusctions d'echec
+        self.mon_frame4 = Frame(self.monFramePrincipal, borderwidth=2, relief=RIDGE, padx=5, pady=5)
+        self.mon_frame4.grid(row=3, column=0, sticky='n')
+        but1 = Button(self.mon_frame4, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
 
 
 
@@ -285,7 +289,7 @@ class Fenetre(Tk):
         self.partie.charger_partie()
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
-        self.rafraichirPiecesMangees()
+        #self.rafraichirPiecesMangees()
 
     def annulerDernierMouvement(self):
         # try:
