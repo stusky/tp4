@@ -220,7 +220,6 @@ class Echiquier:
 
         return True
 
-
     def deplacement_est_valide(self, position_source, position_cible):
         """Vérifie si un déplacement serait valide dans l'échiquier actuel. Notez que chaque type de
         pièce se déplace de manière différente, vous voudrez probablement utiliser le polymorphisme :-).
@@ -268,9 +267,19 @@ class Echiquier:
 
     # Mélo
     def case_est_menacee_par(self, case, autre_joueur):
-        # piece = self.recuperer_piece_a_position(case)
-        # if piece is not None and piece.couleur == autre_joueur:
-        #     raise ValueError ("La couleur de la pièce ne peut être identique à la couleur de l'adversaire.")
+        """"
+            Identifie si une case spécifique est menacée par l'adversaire.
+            Par case menacée, on entend une case ou le joueur adverse pourrait se déplacer, et donc faire une prise,
+            en un seul tour.
+
+            Args:
+                 case (str): Le code de la case (ex: 'a1').
+                 autre_joueur (str): La couleur du joueur menaçant (ou non) la case.
+
+             Returns:
+                 bool: True si la case est menacée par autre_joueur, et False autrement.
+
+        """
 
         for position in self.dictionnaire_pieces.keys():
             if self.dictionnaire_pieces[position].couleur == autre_joueur:

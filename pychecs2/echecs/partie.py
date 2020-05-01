@@ -39,7 +39,7 @@ class Partie:
 
         self.hist = []
 
-        self.nom_fichier_sauvegarde= 'sauvegarde'
+        self.nom_fichier_sauvegarde = 'sauvegarde'
 
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
@@ -91,6 +91,24 @@ class Partie:
 
     # Mélo
     def roque_est_valide(self, position_source, position_cible):
+        """
+            Identifie si le Roi peut effectuer un Roque.
+            Pour pouvoir effectuer un Roque, il faut que:
+            1. La pièece à la position_cible soit une Tour
+            2. La pièce à la position_source soit un Roi
+            3. Ni le Roi ni la Tour n'aient effectué de mouvement depuis le début de la partie.
+            4. La voie doit être libre (aucune pièce) entre le Roi et la Tour.
+            5. Aucune case entre le Roi et la Tour ne soit menacée par l'adversaire.
+            6. Le roi ne soit pas en échec.
+            7. La tour ne soit pas menacée.
+
+            Args:
+                position_source (str): Position du Roi
+                position_cible (str): Position de la Tour
+
+            Returns:
+                bool: True si le Roi peut Roquer, et False autrement.
+        """
         couleur_adversaire = 'blanc'
         rangee_origine = '8'
 
@@ -100,24 +118,32 @@ class Partie:
         if piece.couleur == 'blanc':
             couleur_adversaire = 'noir'
             rangee_origine = '1'
-
+        #critères de 1 à 3
         if isinstance(piece, Roi) and isinstance(piece_cible, Tour) and\
                 piece.couleur == piece_cible.couleur and\
                 self.echiquier.recuperer_piece_a_position(position_source) not in self.hist and \
                 self.echiquier.recuperer_piece_a_position(position_cible) not in self.hist:
-            if position_cible[0] == 'a':
+            if position_cible[0] == 'a': #Grand Roque
                 for colonne in self.echiquier.lettres_colonnes[0:5]:
-
+                    #critères 5 à 7
                     if self.echiquier.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
                         return False
                 return True
-            else:
+            else:                       #Petit Roque
                 for colonne in self.echiquier.lettres_colonnes[4:]:
+                    # critères 5 à 7
                     if self.echiquier.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
                         return False
                 return True
 
     def roquer(self, position_source, position_cible):
+        """
+            Effectue le mouvement de Roque si celui-ce est valide dans l'échiquier.
+
+            Args:
+                position_source (str): position du Roi dans l'échiquier
+                position_cible (str): position de la Tour dans l'échiquier.
+        """
 
         self.joueur_suivant()
         if ord(position_source[0]) > ord(position_cible[0]):
@@ -244,27 +270,15 @@ class Partie:
         else:
             self.joueur_actif = 'blanc'
 
-    def jouer(self):
-        """Tant que la partie n'est pas terminée, joue la partie. À chaque tour :
-            - On affiche l'échiquier.
-            - On demande les deux positions.
-            - On fait le déplacement sur l'échiquier.
-            - On passe au joueur suivant.
-
-        Une fois la partie terminée, on félicite le joueur gagnant!
-
-        """
-        # while not self.partie_terminee():
-        #     print(self.echiquier)
-        #     print("\nAu tour du joueur {}".format(self.joueur_actif))
-        #     source, cible = self.demander_positions()
-        #     self.echiquier.deplacer(source, cible)
-        #     self.joueur_suivant()
-        #
-        # print(self.echiquier)
-        # print("\nPartie terminée! Le joueur {} a gagné".format(self.determiner_gagnant()))
-
     def position_mon_roi(self, couleur_joueur_actif):
+        """
+            Identifie ou se trouve le roi de la couleur entrée en argument dans l'échiquier.
+
+            Args:
+                couleur_joueur_actif (str): couleur du joueur dont on souhaite connaître la position du Roi.
+            Returns:
+                str: Retourne la position du roi dans l'échiquier.
+        """
         for position in self.echiquier.dictionnaire_pieces.keys():
             if isinstance(self.echiquier.dictionnaire_pieces[position], Roi) \
                     and self.echiquier.dictionnaire_pieces[position].couleur == couleur_joueur_actif:
@@ -272,6 +286,14 @@ class Partie:
 
     # Mélo
     def mon_roi_en_echec(self):
+        """
+            Identifie si le Roi du joueur actif est en échec.
+            Par en échec on entend que sa case est menacée par le joueur adverse.
+            Si le joueur actif ne réagit pas à la menace, il perdra la partie au prochain tour.
+
+            Returns:
+                bool: True si le Roi du joueur actif est en échec, false autrement.
+        """
         position_roi = self.position_mon_roi(self.joueur_actif)
         if self.joueur_actif == 'blanc':
             autre_couleur = 'noir'
@@ -295,58 +317,6 @@ class Partie:
         with open(self.nom_fichier_sauvegarde, "rb") as f:
             self.echiquier.dictionnaire_pieces = pickle.load(f)
 
-        # self.echiquier.listeDesEchiquiers = []
-        # self.echiquier.listeDesEchiquiers.append(dict({
-        #     'a1': Tour('blanc'),
-        #     'b1': Cavalier('blanc'),
-        #     'c1': Fou('blanc'),
-        #     'd1': Dame('blanc'),
-        #     'e1': Roi('blanc'),
-        #     'f1': Fou('blanc'),
-        #     'g1': Cavalier('blanc'),
-        #     'h1': Tour('blanc'),
-        #     'a2': Pion('blanc'),
-        #     'b2': Pion('blanc'),
-        #     'c2': Pion('blanc'),
-        #     'd2': Pion('blanc'),
-        #     'e2': Pion('blanc'),
-        #     'f2': Pion('blanc'),
-        #     'g2': Pion('blanc'),
-        #     'h2': Pion('blanc'),
-        #     'a7': Pion('noir'),
-        #     'b7': Pion('noir'),
-        #     'c7': Pion('noir'),
-        #     'd7': Pion('noir'),
-        #     'e7': Pion('noir'),
-        #     'f7': Pion('noir'),
-        #     'g7': Pion('noir'),
-        #     'h7': Pion('noir'),
-        #     'a8': Tour('noir'),
-        #     'b8': Cavalier('noir'),
-        #     'c8': Fou('noir'),
-        #     'd8': Dame('noir'),
-        #     'e8': Roi('noir'),
-        #     'f8': Fou('noir'),
-        #     'g8': Cavalier('noir'),
-        #     'h8': Tour('noir'),
-        # }))
-        # self.echiquier.listeDesEchiquiers.append(self.echiquier.dictionnaire_pieces)
-
-        # self.echiquier.setBlanc = set()
-        # self.echiquier.setNoir = set()
-        # for i in self.echiquier.listeDesEchiquiers[0].values():
-        #     if i.est_blanc():
-        #         self.setBlanc.add(i)
-        #     else:
-        #         self.setNoir.add(i)
-        # TODO documenter la méthode
+       #Todo: documenter
 
 
-
-# aa = ['(blanc)f2=>f4', '(noir)d7=>d5']
-# print(', '.join(aa))
-#
-# dernierDeplacement = ("(" + piece.couleur + ")" + position_source + "=>" + position_cible])
-
-if __name__ == '__main__':
-    pass
