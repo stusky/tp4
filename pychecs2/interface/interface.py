@@ -2,8 +2,9 @@
 un échiquier dans un Canvas, puis de déterminer quelle case a été sélectionnée.
 
 """
-from tkinter import NSEW, Canvas, messagebox, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W, Frame, font
+from tkinter import NSEW, Canvas, messagebox, Label, Tk, Button, EW, LabelFrame, RIDGE, Listbox, END, Entry, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W, Frame, font
 import webbrowser
+from tkinter import simpledialog
 from pychecs2.echecs.partie import AucunePieceAPosition, MauvaiseCouleurPiece
 from pychecs2.echecs.echiquier import Echiquier, ErreurDeplacement
 from pychecs2.echecs.piece import Tour, Roi
@@ -218,9 +219,6 @@ class Fenetre(Tk):
         but1 = Button(self.mon_frame3, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
 
 
-
-
-
         # Frame pour les options de jeux
         self.mon_frame = LabelFrame(self, text="Options de partie", borderwidth=2, relief=RIDGE, padx=5, pady=5)
         self.mon_frame.grid(row=4, column=0, sticky = 'w')
@@ -245,7 +243,6 @@ class Fenetre(Tk):
                                             icon='warning')
         if message is True:
             self.charger()
-
 
     def message_reinitialiser(self):
         message = messagebox.askyesnocancel('Avertissement',
@@ -275,19 +272,52 @@ class Fenetre(Tk):
         self.messages['text'] = ''
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
+        self.rafraichirPiecesMangees()
         self.liste1.delete(0, END)
         self.liste2.delete(0, END)
         self.liste3.delete(0, END)
 
+    def entrer_nom_sauvegarde(self):
+
+        popup= Tk()
+        popup.withdraw()
+        nom_sauvegarde = simpledialog.askstring(title="Sauvegarder",
+                                          prompt="Entrez le nom de la partie à sauvegarder:")
+
+        self.partie.nom_fichier_sauvegarde = nom_sauvegarde
+        print(self.partie.nom_fichier_sauvegarde)
+
+    def recuperer_nom_sauvegarde(self):
+        popup = Tk()
+        popup.withdraw()
+        nom_sauvegarde = simpledialog.askstring(title="Charger",
+                                                prompt="Entrez le nom d'une partie sauvegardée existante:")
+
+        self.partie.nom_fichier_sauvegarde = nom_sauvegarde
+
     def sauvergarder(self):
-        self.partie.sauvegarder_partie()
+        self.entrer_nom_sauvegarde()
+        if self.partie.nom_fichier_sauvegarde is not None:
+            self.partie.sauvegarder_partie()
+
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
 
     def charger(self):
-        self.partie.charger_partie()
+        self.recuperer_nom_sauvegarde()
+        try:
+            self.partie.charger_partie()
+        except:
+            popup = Tk()
+            popup.title('Erreur')
+
+            label = Label(popup, text="Le nom de sauvegarde entré n'existe pas. Impossible de charger la partie.")
+            label.grid()
+            popup.mainloop()
+
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
+        self.rafraichirPiecesMangees()
 
     def annulerDernierMouvement(self):
         try:

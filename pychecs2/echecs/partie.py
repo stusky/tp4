@@ -4,7 +4,7 @@ dont un objet échiquier (une instance de la classe Echiquier).
 
 """
 from pychecs2.echecs.echiquier import Echiquier
-from pychecs2.echecs.piece import Roi, Tour
+from pychecs2.echecs.piece import Roi, Tour, Pion, Dame, Fou, Cavalier
 import pickle
 
 
@@ -38,6 +38,8 @@ class Partie:
         # self.gapNoir = None
 
         self.hist = []
+
+        self.nom_fichier_sauvegarde= 'sauvegarde'
 
     def determiner_gagnant(self):
         """Détermine la couleur du joueur gagnant, s'il y en a un. Pour déterminer si un joueur est le gagnant,
@@ -75,7 +77,6 @@ class Partie:
             del self.echiquier.listeDesEchiquiers[-1]
             self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-1]
             self.joueur_suivant()
-        print(len(self.echiquier.listeDesEchiquiers))
 
 
         self.resteBlanc = set()
@@ -115,7 +116,6 @@ class Partie:
                     if self.echiquier.case_est_menacee_par(colonne + rangee_origine, couleur_adversaire):
                         return False
                 return True
-
 
     def roquer(self, position_source, position_cible):
 
@@ -171,7 +171,6 @@ class Partie:
         if self.echiquier.deplacement_est_valide(position_source, position_cible):
             self.hist.append(piece)
 
-
         self.echiquier.deplacer(position_source, position_cible)
 
         self.joueur_suivant()
@@ -181,6 +180,49 @@ class Partie:
         echiquierCopy = dict(self.echiquier.dictionnaire_pieces)
         self.echiquier.listeDesEchiquiers.append(echiquierCopy)
 
+        self.dictionnaire_pieces_initial = {
+            'a1': Tour('blanc'),
+            'b1': Cavalier('blanc'),
+            'c1': Fou('blanc'),
+            'd1': Dame('blanc'),
+            'e1': Roi('blanc'),
+            'f1': Fou('blanc'),
+            'g1': Cavalier('blanc'),
+            'h1': Tour('blanc'),
+            'a2': Pion('blanc'),
+            'b2': Pion('blanc'),
+            'c2': Pion('blanc'),
+            'd2': Pion('blanc'),
+            'e2': Pion('blanc'),
+            'f2': Pion('blanc'),
+            'g2': Pion('blanc'),
+            'h2': Pion('blanc'),
+            'a7': Pion('noir'),
+            'b7': Pion('noir'),
+            'c7': Pion('noir'),
+            'd7': Pion('noir'),
+            'e7': Pion('noir'),
+            'f7': Pion('noir'),
+            'g7': Pion('noir'),
+            'h7': Pion('noir'),
+            'a8': Tour('noir'),
+            'b8': Cavalier('noir'),
+            'c8': Fou('noir'),
+            'd8': Dame('noir'),
+            'e8': Roi('noir'),
+            'f8': Fou('noir'),
+            'g8': Cavalier('noir'),
+            'h8': Tour('noir'),
+        }
+
+        self.setBlanc = set()
+        self.setNoir = set()
+        for i in self.dictionnaire_pieces_initial.values():
+            if i.est_blanc():
+                self.setBlanc.add(i)
+            else:
+                self.setNoir.add(i)
+
         self.resteBlanc = set()
         self.resteNoir = set()
         for i in self.echiquier.dictionnaire_pieces.values():
@@ -189,12 +231,9 @@ class Partie:
             else:
                 self.resteNoir.add(i)
 
-        self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
-        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
-        print(self.echiquier.setBlanc)
-        print(self.resteBlanc)
-        print(self.gapBlanc)
 
+        self.gapBlanc = list(self.echiquier.setBlanc-self.resteBlanc)
+        self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
 
     def joueur_suivant(self):
         """Change le joueur actif: passe de blanc à noir, ou de noir à blanc, selon la couleur du joueur actif.
@@ -246,15 +285,60 @@ class Partie:
     def sauvegarder_partie(self):
         """
         """
-        with open("sauvegarde", "wb") as f:
+        with open(self.nom_fichier_sauvegarde, "wb") as f:
             pickle.dump(self.echiquier.dictionnaire_pieces, f)
         #TODO documenter la méthode
 
     def charger_partie(self):
         """
         """
-        with open("sauvegarde", "rb") as f:
+        with open(self.nom_fichier_sauvegarde, "rb") as f:
             self.echiquier.dictionnaire_pieces = pickle.load(f)
+
+        # self.echiquier.listeDesEchiquiers = []
+        # self.echiquier.listeDesEchiquiers.append(dict({
+        #     'a1': Tour('blanc'),
+        #     'b1': Cavalier('blanc'),
+        #     'c1': Fou('blanc'),
+        #     'd1': Dame('blanc'),
+        #     'e1': Roi('blanc'),
+        #     'f1': Fou('blanc'),
+        #     'g1': Cavalier('blanc'),
+        #     'h1': Tour('blanc'),
+        #     'a2': Pion('blanc'),
+        #     'b2': Pion('blanc'),
+        #     'c2': Pion('blanc'),
+        #     'd2': Pion('blanc'),
+        #     'e2': Pion('blanc'),
+        #     'f2': Pion('blanc'),
+        #     'g2': Pion('blanc'),
+        #     'h2': Pion('blanc'),
+        #     'a7': Pion('noir'),
+        #     'b7': Pion('noir'),
+        #     'c7': Pion('noir'),
+        #     'd7': Pion('noir'),
+        #     'e7': Pion('noir'),
+        #     'f7': Pion('noir'),
+        #     'g7': Pion('noir'),
+        #     'h7': Pion('noir'),
+        #     'a8': Tour('noir'),
+        #     'b8': Cavalier('noir'),
+        #     'c8': Fou('noir'),
+        #     'd8': Dame('noir'),
+        #     'e8': Roi('noir'),
+        #     'f8': Fou('noir'),
+        #     'g8': Cavalier('noir'),
+        #     'h8': Tour('noir'),
+        # }))
+        # self.echiquier.listeDesEchiquiers.append(self.echiquier.dictionnaire_pieces)
+
+        # self.echiquier.setBlanc = set()
+        # self.echiquier.setNoir = set()
+        # for i in self.echiquier.listeDesEchiquiers[0].values():
+        #     if i.est_blanc():
+        #         self.setBlanc.add(i)
+        #     else:
+        #         self.setNoir.add(i)
         # TODO documenter la méthode
 
 

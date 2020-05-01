@@ -32,8 +32,6 @@ class Echiquier:
         #Trucs a Thierry
         self.listeDesEchiquiers = []
 
-
-
         self.initialiser_echiquier_depart()
 
 
@@ -275,11 +273,8 @@ class Echiquier:
         #     raise ValueError ("La couleur de la pièce ne peut être identique à la couleur de l'adversaire.")
 
         for position in self.dictionnaire_pieces.keys():
-            # print(position)
             if self.dictionnaire_pieces[position].couleur == autre_joueur:
-                # print(f'{self.dictionnaire_pieces[position]} : {position}')
                 if isinstance(self.dictionnaire_pieces[position], Pion):
-                    # print(position, case)
                     if self.dictionnaire_pieces[position].peut_faire_une_prise_vers(position, case):
                         return True
                 else:
