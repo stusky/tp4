@@ -1,13 +1,13 @@
 
-Nom coéquipier 1 :
-Nom coéquipier 2 :
+Nom coéquipier 1 : Mélodie Mayer
+Nom coéquipier 2 : Thierry Desjardins
 
-Numéro de dossier (matricule) coéquipier 1 :
+Numéro de dossier (matricule) coéquipier 1 : 111 268 671
 Numéro de dossier (matricule) coéquipier 2 :
 
 Temps de réalisation total (estimé) : X heures
 
-Souhaitez-vous participer au prix Pierre Ardouin ? (OUI/NON) : 
+Souhaitez-vous participer au prix Pierre Ardouin ? (OUI/NON) : NON
 
 Correction
 ==========
@@ -68,6 +68,34 @@ pas ces fonctionnalités.
 Pour les fonctionnalités avec une *, vous DEVEZ indiquer ici quel fichier de
 sauvegarde ouvrir et quels déplacements effectuer pour que le correcteur puisse
 évaluer votre fonctionnalité.
+
+Liste des fonctionnalités implémentées:
+
+1. Option de lire les règlements du jeu
+2. Affichage d’une liste des déplacements effectués
+3. Permettre d’annuler le dernier mouvement
+10. Afficher les pièces que chaque joueur a perdu
+12. Demander si on veut sauvegarder avant de quitter/charger
+13. Règles avancées : le «roque»
+15. Règles avancées : détection des mises en échec
+
+Pour la fonction 13. Règles avancées : le «roque»:
+    1) Exécuter le fichier __main__.py
+    2) Cliquer sur Charger. Confirmer vouloir charger.
+    3) Entrer : FICHIER_ROQUE
+    4) Peser sur la touche Enter
+    5) Sélecitonner le Roi E1.
+    6) Sélectionner la Tour en H1.
+    Le Roque est alors effectué, car selon l'emplacement des autres pièces.
+
+
+Pour la fonction 15. Règles avancées : détection des mises en échec:
+    1) Exécuter le fichier __main__.py
+    2) Cliquer sur Charger. Confirmer vouloir charger.
+    3) Entrer : FICHIER_ROI_EN_ECHEC
+    4) Peser sur la touche Enter
+    5) Sélecitonner le fou noir en F8 et l'apporter en B4.
+    Il met alors le Roi blanc en échec, et sa case devient rouge.
 
 
 Total: /30

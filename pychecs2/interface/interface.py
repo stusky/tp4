@@ -2,8 +2,9 @@
 un échiquier dans un Canvas, puis de déterminer quelle case a été sélectionnée.
 
 """
-from tkinter import NSEW, Canvas, messagebox, Label, Tk, Button, LabelFrame, RIDGE, Listbox, END, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W, Frame, font
+from tkinter import NSEW, Canvas, messagebox, Label, Tk, Button, EW, LabelFrame, RIDGE, Listbox, END, Entry, Scrollbar, RIGHT, Y, LEFT, VERTICAL, N, S, E, W, Frame, font
 import webbrowser
+from tkinter import simpledialog
 from pychecs2.echecs.partie import AucunePieceAPosition, MauvaiseCouleurPiece
 from pychecs2.echecs.echiquier import Echiquier, ErreurDeplacement
 from pychecs2.echecs.piece import Tour, Roi
@@ -186,6 +187,7 @@ class Fenetre(Tk):
 
 
 
+
         self.monSousFrame = Frame(self.monFramePrincipal)
         self.monSousFrame.grid(row=1, column=0, sticky='n')
 
@@ -215,13 +217,6 @@ class Fenetre(Tk):
         but1 = Button(self.mon_frame3, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
 
 
-        # FRAME a DROITE: Bouton pour se connecter au site web des intrusctions d'echec
-        self.mon_frame4 = Frame(self.monFramePrincipal, borderwidth=2, relief=RIDGE, padx=5, pady=5)
-        self.mon_frame4.grid(row=3, column=0, sticky='n')
-        but1 = Button(self.mon_frame4, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
-
-
-
         # Frame pour les options de jeux
         self.mon_frame = LabelFrame(self, text="Options de partie", borderwidth=2, relief=RIDGE, padx=5, pady=5)
         self.mon_frame.grid(row=4, column=0, sticky = 'w')
@@ -241,14 +236,21 @@ class Fenetre(Tk):
         self.x = 1
         self.y = 1
     def message_charger(self):
+        """"
+            Ouvre une fenêtre s'assurant que l'utilisateur veut bien charger.
+            Lui propose de sauvegarder la partie.
+        """
         message = messagebox.askyesno('Avertissement',
                                             'Voulez-vous vraiment charger une autre partie? \nCette partie sera perdue.',
                                             icon='warning')
         if message is True:
             self.charger()
 
-
     def message_reinitialiser(self):
+        """"
+            Ouvre une fenêtre s'assurant que l'utilisateur veut bien réinitialiser.
+            Lui propose de sauvegarder la partie.
+        """
         message = messagebox.askyesnocancel('Avertissement',
                                             'Voulez-vous sauvgarder avant de redémarrer la partie? \nTout changement non sauvegardé sera perdu.',
                                             icon='warning')
@@ -259,6 +261,10 @@ class Fenetre(Tk):
             self.reinitialiser()
 
     def message_quitter(self):
+        """"
+            Ouvre une fenêtre s'assurant que l'utilisateur veut bien quitter.
+            Lui propose de sauvegarder la partie.
+        """
         message = messagebox.askyesnocancel('Avertissement', 'Voulez-vous sauvgarder avant de quitter? \nTout changement non sauvegardé sera perdu.', icon='warning')
         if message is True:
             self.sauvergarder()
@@ -276,20 +282,68 @@ class Fenetre(Tk):
         self.messages['text'] = ''
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
+        self.rafraichirPiecesMangees()
         self.liste1.delete(0, END)
         self.liste2.delete(0, END)
         self.liste3.delete(0, END)
 
+    def entrer_nom_sauvegarde(self):
+        """"
+            On affiche une fenêtre demandant à l'utlisateur d'entrer un nom pour la partie à sauvegarder.
+            Pour charger une partie sauvegardée, il faut entrer le nom de la sauvegarde choisi ici.
+            Par défaut, le nom de la sauvegarde est 'sauvegarde'.
+        """
+        popup= Tk()
+        popup.withdraw()
+        nom_sauvegarde = simpledialog.askstring(title="Sauvegarder",
+                                          prompt="Entrez le nom de la partie à sauvegarder:", initialvalue="sauvegarde")
+
+        self.partie.nom_fichier_sauvegarde = nom_sauvegarde
+
+    def recuperer_nom_sauvegarde(self):
+        """"
+            On affiche une fenêtre demandant à l'utlisateur d'entrer le nom d'une sauvegarde existante.
+            Ce nom sera stocké dans self.partie.nom_fichier_sauvegarde.
+        """
+        popup = Tk()
+        popup.withdraw()
+        nom_sauvegarde = simpledialog.askstring(title="Charger",
+                                                prompt="Entrez le nom d'une partie sauvegardée existante:")
+
+        self.partie.nom_fichier_sauvegarde = nom_sauvegarde
+
     def sauvergarder(self):
-        self.partie.sauvegarder_partie()
+        """"
+            Sauvegarde la position des pièces dans l'échiquier au moment de la sauvegarde.
+            La sauvegarde est faite au nom entré par l'utilisateur dans self.partie.nom_fichier_sauvegarde.
+        """
+        self.entrer_nom_sauvegarde()
+        if self.partie.nom_fichier_sauvegarde != '' and self.partie.nom_fichier_sauvegarde is not None:
+            self.partie.sauvegarder_partie()
+
+
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
 
     def charger(self):
-        self.partie.charger_partie()
+        """"
+        Permet de charger une partie existante.
+        Si le nom entré n'existe pas, retourne une erreur.
+        Si le fichier existe, il charge l'échiqier.
+        """
+        self.recuperer_nom_sauvegarde()
+        try:
+            self.partie.charger_partie()
+        except:
+            popup = Tk()
+            popup.title('Erreur')
+
+            label = Label(popup, text="Le nom de sauvegarde entré n'existe pas. Impossible de charger la partie.")
+            label.grid()
+            popup.mainloop()
+
         self.canvas_echiquier.raffraichir_cases()
         self.canvas_echiquier.raffraichir_pieces()
-        #self.rafraichirPiecesMangees()
 
     def annulerDernierMouvement(self):
         try:
@@ -313,7 +367,9 @@ class Fenetre(Tk):
                 self.liste3.insert(END, i)
 
     def roi_en_rouge(self):
-
+        """"
+            Si le Roi du joueur actif est en échec, un carré rouge est créé sous le Roi menacé.
+        """
         if self.partie.mon_roi_en_echec():
             #On supprime les pieces et les cases
             # self.canvas_echiquier.delete('case')
@@ -341,10 +397,10 @@ class Fenetre(Tk):
             # self.canvas_echiquier.dessiner_pieces()
 
     def creer_carre_selection(self):
-
-        # self.canvas_echiquier.delete('piece')
-        # self.canvas_echiquier.delete('select')
-        # self.canvas_echiquier.raffraichir_cases()
+        """"
+            Dessine un carré rose à la position (x,y).
+            Méthode appelée pour identifier la case sélectionnée par le joueur.
+        """
 
         #Dessiner le carre
         self.canvas_echiquier.create_rectangle(
@@ -354,9 +410,12 @@ class Fenetre(Tk):
             ((self.y // self.canvas_echiquier.n_pixels_par_case) + 1) * self.canvas_echiquier.n_pixels_par_case,
             fill='pink', tags='select')
 
-        # self.canvas_echiquier.dessiner_pieces()
-
     def selectionner(self, event):
+        """"
+            Identifie ou le joueur a cliqué sur le canvas.
+            Permet de sélectionner les pièces et de les déplacer.
+            S'assure que les sélections et les déplacements sont valides selon les règles du jeu d'échec.
+        """
         self.x = event.x
         self.y = event.y
 
@@ -371,9 +430,9 @@ class Fenetre(Tk):
 
         piece_selectionnee = self.partie.echiquier.recuperer_piece_a_position(position)
 
-        # 2
+        # Si la case sélectionnée est vide
         if piece_selectionnee is None:
-            if self.piece_a_deplacer is None: #2b
+            if self.piece_a_deplacer is None: #Si aucune pièce n'est stockée dans self.piece_a_deplacer
                 # Dessin de l'echiquier
                 self.canvas_echiquier.delete('case')
                 self.canvas_echiquier.delete('piece')
@@ -384,11 +443,11 @@ class Fenetre(Tk):
                 self.messages['text'] = f"Il n'y a aucune pièce à la position {position}."
                 self.messages['foreground'] = 'red'
 
-            else: #2a
-                try: #i
+            else: #Si un pièce est stockée dans self.piece_a_deplacer
+                try: #On essaye d'effectuer le déplacement
                     self.partie.deplacer(self.position_piece_a_deplacer, position)
 
-                    #Trucs a Thierry
+                    #Derniers déplacements et pièces mangées
                     self.liste1.insert(END, self.partie.dernierDeplacement)
                     self.liste2.delete(0, END)
                     for i in self.partie.gapBlanc:
@@ -409,7 +468,7 @@ class Fenetre(Tk):
                     self.canvas_echiquier.dessiner_pieces()
 
                     self.messages['text'] = ''
-                except: #ii
+                except: #Si le déplacement est non valide
                     self.piece_a_deplacer = None
                     self.position_piece_a_deplacer = None
 
@@ -423,9 +482,9 @@ class Fenetre(Tk):
 
                     self.messages['text'] = f"Le déplacement est invalide."
                     self.messages['foreground'] = 'red'
-        # 1
+        #Si la case sélectionnée contient une pièce appartenant au joueur actif
         elif piece_selectionnee.couleur == self.partie.joueur_actif:
-            if self.piece_a_deplacer is None:   #1a
+            if self.piece_a_deplacer is None:   #Si aucune pièce n'est stockée dans self.piece_a_deplacer, on emagasine celle slectionnée
                 self.piece_a_deplacer = piece_selectionnee
                 self.position_piece_a_deplacer = position
 
@@ -461,7 +520,7 @@ class Fenetre(Tk):
                     if self.partie.roque_est_valide(self.position_piece_a_deplacer, position):
                         self.partie.roquer(self.position_piece_a_deplacer, position)
 
-                        # Trucs a Thierry
+                        #Derniers déplacements et pièces mangées
                         self.liste1.insert(END, self.partie.dernierDeplacement)
                         self.liste2.delete(0, END)
                         for i in self.partie.gapBlanc:
@@ -479,7 +538,6 @@ class Fenetre(Tk):
                         self.canvas_echiquier.dessiner_cases()
                         self.roi_en_rouge()
                         self.canvas_echiquier.dessiner_pieces()
-                        print('piltext')
                         self.messages['text'] = ''
                     else:
                         self.piece_a_deplacer = None
@@ -495,11 +553,9 @@ class Fenetre(Tk):
 
                         self.messages['text'] = f"Le déplacement est invalide."
                         self.messages['foreground'] = 'red'
-                        print(self.partie.joueur_actif)
 
-                #1c
+                #Si on tente de sélectionner une 2e fois la même case, on la désélectionne
                 else:
-                    print('ici')
                     self.piece_a_deplacer = piece_selectionnee
                     self.position_piece_a_deplacer = position
 
@@ -514,11 +570,10 @@ class Fenetre(Tk):
 
                     self.messages['text'] = f'Pièce sélectionnée : {self.piece_a_deplacer} à la position {position}.'
                     self.messages['foreground'] = 'black'
-        # 3
+        #Si la case sélectionnée contient une pièce appartenant à l'adversaire
         elif piece_selectionnee.couleur != self.partie.joueur_actif:
-            # 3b
+            #Si aucune pièce n'est stockée dans self.piece_a_deplacer
             if self.piece_a_deplacer is None:
-                print('et ici')
                 # Dessin de l'echiquier
                 self.canvas_echiquier.delete('case')
                 self.canvas_echiquier.delete('piece')
@@ -528,13 +583,12 @@ class Fenetre(Tk):
 
                 self.messages['text'] = f"La pièce à la position {position} n'est pas à vous!"
                 self.messages['foreground'] = 'red'
-            # 3a
+            #Si une pièce est stockée dans self.piece_a_deplacer
             else:
-                try:  # i
-                    print('puis meme la')
+                try:  #On tente de la déplacer jusqu'à la case sélectionnée
                     self.partie.deplacer(self.position_piece_a_deplacer, position)
 
-                    # Trucs a Thierry
+                    # Derniers déplacements et pièces mangées
                     self.liste1.insert(END, self.partie.dernierDeplacement)
                     self.liste2.delete(0, END)
                     for i in self.partie.gapBlanc:
@@ -562,7 +616,7 @@ class Fenetre(Tk):
                         self.messages[
                             'text'] = 'Partie terminée, les ' + self.partie.determiner_gagnant().upper() \
                                       + ' ont gagné.\nOn recommence?!'
-                except:  # ii
+                except:  # Si le déplacement est invalide
                     self.piece_a_deplacer = None
                     self.position_piece_a_deplacer = None
 
