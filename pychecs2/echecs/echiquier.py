@@ -32,6 +32,9 @@ class Echiquier:
         #Trucs a Thierry
         self.listeDesEchiquiers = []
 
+        self.setBlanc = set()
+        self.setNoir = set()
+
         self.initialiser_echiquier_depart()
 
 
@@ -363,9 +366,6 @@ class Echiquier:
             'g8': Cavalier('noir'),
             'h8': Tour('noir'),
         }
-        self.setBlanc = set()
-        self.setNoir = set()
-
         self.listeDesEchiquiers.append(dict(self.dictionnaire_pieces))
 
         for i in self.listeDesEchiquiers[0].values():

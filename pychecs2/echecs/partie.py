@@ -167,12 +167,6 @@ class Partie:
     def deplacer(self, position_source, position_cible):
         piece = self.echiquier.recuperer_piece_a_position(position_source)
 
-
-        # if piece is None:
-        #     raise AucunePieceAPosition("Aucune piece à cet endroit!")
-        # elif piece.couleur != self.joueur_actif:
-        #     raise MauvaiseCouleurPiece("La pièce source n'appartient pas au joueur actif!")
-
         #Pour le roque
         if self.echiquier.deplacement_est_valide(position_source, position_cible):
             self.hist.append(piece)
@@ -190,16 +184,14 @@ class Partie:
         self.resteBlanc = set()
         self.resteNoir = set()
         for i in self.echiquier.dictionnaire_pieces.values():
-            if (i.est_blanc()):
+            if i.est_blanc():
                 self.resteBlanc.add(i)
             else:
                 self.resteNoir.add(i)
 
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
-
-
-
+        #print(self.gapBlanc)
 
 
     def joueur_suivant(self):
@@ -281,20 +273,20 @@ class Partie:
 
     # Ivan
     def sauvegarder_partie(self):
-        with open('sauvegarde.txt', 'w') as fp:
-            fp.write('\n'.join(self.historique))
+        """
+        """
+        with open("sauvegarde", "wb") as f:
+            pickle.dump(self.echiquier.dictionnaire_pieces, f)
+        #TODO documenter la méthode
 
-    # Ivan
     def charger_partie(self):
+        """
+        """
+        with open("sauvegarde", "rb") as f:
+            self.echiquier.dictionnaire_pieces = pickle.load(f)
+        # TODO documenter la méthode
 
-        self.echiquier = Echiquier()
 
-        with open('sauvegarde.txt', 'r') as fp:
-            lignes = fp.read()
-
-            for jeu in lignes.split('\n'):
-                source, cible = jeu.split('-')
-                self.echiquier.deplacer(source, cible)
 
         #
         # with open("sauvegarde", "rb") as f:
