@@ -29,13 +29,8 @@ class Echiquier:
         self.chiffres_rangees = ['1', '2', '3', '4', '5', '6', '7', '8']
         self.lettres_colonnes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
-        #Trucs a Thierry
-        self.listeDesEchiquiers = []
-
         self.initialiser_echiquier_depart()
 
-
-        # Mélo
         self.hist = []
 
     def position_est_valide(self, position):
@@ -265,7 +260,6 @@ class Echiquier:
 
         return piece.peut_se_deplacer_vers(position_source, position_cible)
 
-    # Mélo
     def case_est_menacee_par(self, case, autre_joueur):
         """"
             Identifie si une case spécifique est menacée par l'adversaire.
@@ -292,18 +286,19 @@ class Echiquier:
         return False
 
     def deplacer(self, position_source, position_cible):
-        """Effectue le déplacement d'une pièce en position source, vers la case en position cible. Vérifie d'abord
-    #         si le déplacement est valide, et ne fait rien (puis retourne False) dans ce cas. Si le déplacement est valide,
-    #         il est effectué (dans l'échiquier actuel) et la valeur True est retournée.
-    #
-    #         Args:
-    #             position_source (str): La position source.
-    #             position_cible (str): La position cible.
-    #
-    #         Returns:
-    #             bool: True si le déplacement était valide et a été effectué, et False autrement.
-    #
-    #     #     """
+        """
+        Effectue le déplacement d'une pièce en position source, vers la case en position cible. Vérifie d'abord
+            si le déplacement est valide, et ne fait rien (puis retourne False) dans ce cas. Si le déplacement est valide,
+            il est effectué (dans l'échiquier actuel) et la valeur True est retournée.
+
+            Args:
+                position_source (str): La position source.
+                position_cible (str): La position cible.
+
+            Returns:
+                bool: True si le déplacement était valide et a été effectué, et False autrement.
+
+        """
 
         if not self.deplacement_est_valide(position_source, position_cible):
             raise ErreurDeplacement("Le déplacement demandé n'est pas possible")
@@ -312,7 +307,8 @@ class Echiquier:
         del self.dictionnaire_pieces[position_source]
 
     def roi_de_couleur_est_dans_echiquier(self, couleur):
-        """Vérifie si un roi de la couleur reçue en argument est présent dans l'échiquier.
+        """
+        Vérifie si un roi de la couleur reçue en argument est présent dans l'échiquier.
 
         Args:
             couleur (str): La couleur (blanc ou noir) du roi à rechercher.
@@ -334,7 +330,10 @@ class Echiquier:
         dictionnaire_pieces de votre instance d'Echiquier.
 
         """
+        # Initialisation d'une liste vide de Liste des Échiquiers qui servira a revenir en arrière avec la fonction
+        # d'Annulation du dernier mouvement
         self.listeDesEchiquiers = []
+
         self.dictionnaire_pieces = {
             'a1': Tour('blanc'),
             'b1': Cavalier('blanc'),
@@ -369,8 +368,11 @@ class Echiquier:
             'g8': Cavalier('noir'),
             'h8': Tour('noir'),
         }
+
+        # Création d'une premiere liste des échiquiers pour générer un historique dès le départ
         self.listeDesEchiquiers.append(dict(self.dictionnaire_pieces))
 
+        # Création d'un Sets de pièces blanches et noirs pour calculer la différence avec les pièces restantes
         self.setBlanc = set()
         self.setNoir = set()
         for i in self.listeDesEchiquiers[0].values():

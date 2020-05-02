@@ -117,14 +117,18 @@ class CanvasEchiquier(Canvas):
         self.raffraichir_cases()
         self.raffraichir_pieces()
 
-    #Thierry
+
     def raffraichir_pieces(self):
-        # On supprime les anciennes pièces et on ajoute les nouvelles.
+        '''
+        On supprime les anciennes pièces et on ajoute les nouvelles.
+        '''
         self.delete('piece')
         self.dessiner_pieces()
 
     def raffraichir_cases(self):
-        # On supprime les anciennes pièces et on ajoute les nouvelles.
+        '''
+        On supprime les anciennes pièces et on ajoute les nouvelles.
+        '''
         self.delete('case')
         self.delete('select')
         self.dessiner_cases()
@@ -187,7 +191,7 @@ class Fenetre(Tk):
 
 
 
-
+        # Creation d'un espace pour mettre les 2 fenetres de pièces mangées (un sous-Frame)
         self.monSousFrame = Frame(self.monFramePrincipal)
         self.monSousFrame.grid(row=1, column=0, sticky='n')
 
@@ -217,7 +221,7 @@ class Fenetre(Tk):
         but1 = Button(self.mon_frame3, text="Lien web pour accéder\naux règles du jeux!", command=self.ouvrirURL).grid(row=0, column=0)
 
 
-        # Frame pour les options de jeux
+        # Frame pour les options de jeux en bas de l'échiquier
         self.mon_frame = LabelFrame(self, text="Options de partie", borderwidth=2, relief=RIDGE, padx=5, pady=5)
         self.mon_frame.grid(row=4, column=0, sticky = 'w')
         bouton_sauver = Button(self.mon_frame, text="Sauvegarder", command = self.sauvergarder).grid(row=0, column=0)
@@ -235,6 +239,7 @@ class Fenetre(Tk):
         #Pour que x et y soient accessibles dans selectionner ET dans creer_carre_selection
         self.x = 1
         self.y = 1
+
     def message_charger(self):
         """"
             Ouvre une fenêtre s'assurant que l'utilisateur veut bien charger.
@@ -273,10 +278,17 @@ class Fenetre(Tk):
             self.destroy()
 
     def ouvrirURL(self):
+        '''
+        Permet d'ouvrir un ULR qui donne sur les règlements du jeux d'échec
+        '''
         url = 'https://fr.wikipedia.org/wiki/Règles_du_jeu_d%27échecs'
         webbrowser.open_new(url)
 
     def reinitialiser(self):
+        '''
+        Permet de raffraichir les cases, les pieces, les pieces mangées et les informations dans les Listbox
+        pour les déplacements et les pièces blanches et noires.
+        '''
         self.partie.echiquier.initialiser_echiquier_depart()
         self.partie.joueur_actif = 'blanc'
         self.messages['text'] = ''
@@ -346,6 +358,9 @@ class Fenetre(Tk):
         self.canvas_echiquier.raffraichir_pieces()
 
     def annulerDernierMouvement(self):
+        '''
+        Permet d'annuler le dernier mouvement et de mettre à jour l'affichage
+        '''
         try:
             self.partie.annulerDernierMouvement()
             self.canvas_echiquier.raffraichir_cases()
@@ -359,12 +374,15 @@ class Fenetre(Tk):
             self.messages['foreground'] = 'red'
 
     def rafraichirPiecesMangees(self):
-            self.liste2.delete(0, END)
-            for i in self.partie.gapBlanc:
-                self.liste2.insert(END, i)
-            self.liste3.delete(0, END)
-            for i in self.partie.gapNoir:
-                self.liste3.insert(END, i)
+        '''
+        Permet de rafraichir l'affichage des pièces blanches et noires mangées
+        '''
+        self.liste2.delete(0, END)
+        for i in self.partie.gapBlanc:
+            self.liste2.insert(END, i)
+        self.liste3.delete(0, END)
+        for i in self.partie.gapNoir:
+            self.liste3.insert(END, i)
 
     def roi_en_rouge(self):
         """"

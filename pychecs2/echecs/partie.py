@@ -15,14 +15,14 @@ class MauvaiseCouleurPiece(Exception):
     pass
 
 class Partie:
-    """La classe Partie contient les informations sur une partie d'échecs, c'est à dire un échiquier, puis
+    """
+    La classe Partie contient les informations sur une partie d'échecs, c'est à dire un échiquier, puis
     un joueur actif (blanc ou noir). Des méthodes sont disponibles pour faire avancer la partie et interagir
     avec l'utilisateur.
 
     Attributes:
         joueur_actif (str): La couleur du joueur actif, 'blanc' ou 'noir'.
         echiquier (Echiquier): L'échiquier sur lequel se déroule la partie.
-
     """
     def __init__(self):
         # Le joueur débutant une partie d'échecs est le joueur blanc.
@@ -31,11 +31,9 @@ class Partie:
         # Création d'une instance de la classe Echiquier, qui sera manipulée dans les méthodes de la classe.
         self.echiquier = Echiquier()
 
+        #intialisation de deux listes qui permettront d'afficher les derniers déplacements
         self.listeDeplacements = []
         self.dernierDeplacement = []
-
-        # self.gapBlanc = None
-        # self.gapNoir = None
 
         self.hist = []
 
@@ -67,7 +65,11 @@ class Partie:
         return self.determiner_gagnant() != 'aucun'
 
     def annulerDernierMouvement(self):
-        # self.echiquier.dictionnaire_pieces = self.echiquier.listeDesEchiquiers[-2]
+        """
+        Permet d'annuler le dernier mouvement et de rafraichir les pieces blanches et noires qui restent.
+        Un premier scénario ou la liste a 2 ou moins historique d'échiquier.
+        Un deuxième scénario dans le cas contraire.
+        """
 
         if len(self.echiquier.listeDesEchiquiers) <= 2:
             self.echiquier.initialiser_echiquier_depart()
@@ -89,7 +91,6 @@ class Partie:
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
 
-    # Mélo
     def roque_est_valide(self, position_source, position_cible):
         """
             Identifie si le Roi peut effectuer un Roque.
@@ -189,8 +190,18 @@ class Partie:
         self.gapBlanc = list(self.echiquier.setBlanc - self.resteBlanc)
         self.gapNoir = list(self.echiquier.setNoir - self.resteNoir)
 
-    #Thierry
     def deplacer(self, position_source, position_cible):
+        """
+            Permet de d'appeler le mouvement à la méthode déplacer du module Échiquier.
+            Permet aussi de recalculer les pièces mangées qui sert dans le visuel du jeux.
+            En même temps, sert à écrire ce qui sera communiquer au joueur sur la liste des déplacements
+            dans le Listbox du jeux.
+
+            Args:
+                position_source (str): Position de source de la pièce
+                position_cible (str): Position cible de la pièce
+
+        """
         piece = self.echiquier.recuperer_piece_a_position(position_source)
 
         #Pour le roque
@@ -284,7 +295,6 @@ class Partie:
                     and self.echiquier.dictionnaire_pieces[position].couleur == couleur_joueur_actif:
                 return position
 
-    # Mélo
     def mon_roi_en_echec(self):
         """
             Identifie si le Roi du joueur actif est en échec.
@@ -306,17 +316,17 @@ class Partie:
 
     def sauvegarder_partie(self):
         """
+        Permet de sauver la partie.
         """
         with open(self.nom_fichier_sauvegarde, "wb") as f:
             pickle.dump(self.echiquier.dictionnaire_pieces, f)
-        #TODO documenter la méthode
 
     def charger_partie(self):
         """
+        Permet de charger une partie sauvegarder avec la méthode sauvergarder_partie
         """
         with open(self.nom_fichier_sauvegarde, "rb") as f:
             self.echiquier.dictionnaire_pieces = pickle.load(f)
 
-       #Todo: documenter
 
 
