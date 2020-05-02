@@ -1,11 +1,11 @@
 
 Nom coéquipier 1 : Mélodie Mayer
-Nom coéquipier 2 : Thierry Desjardins
+Nom coéquipier 2 : Thierry Gohier-Desjardins
 
 Numéro de dossier (matricule) coéquipier 1 : 111 268 671
-Numéro de dossier (matricule) coéquipier 2 :
+Numéro de dossier (matricule) coéquipier 2 : 111 281 076
 
-Temps de réalisation total (estimé) : X heures
+Temps de réalisation total (estimé) : 50 heures
 
 Souhaitez-vous participer au prix Pierre Ardouin ? (OUI/NON) : NON
 
